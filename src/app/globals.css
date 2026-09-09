@@ -1,26 +1,80 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  /* Tipografías */
+  --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display), ui-serif, Georgia, serif;
+  --font-script: var(--font-script), cursive;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Paleta rústico premium */
+  --color-forja: #1c1a19;
+  --color-forja-soft: #2a2624;
+  --color-crema: #f7f5f0;
+  --color-cuero: #8b5a2b;
+  --color-cuero-dark: #6b4421;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: #f7f5f0;
+  color: #292524; /* stone-800 */
+}
+
+/* ---------------------------------------------------------------------------
+   Reglas globales de responsive.
+   Todo el sitio (tienda y backoffice) se disena mobile-first: las clases sin
+   prefijo son las del telefono y los breakpoints agrandan, nunca al reves.
+   --------------------------------------------------------------------------- */
+
+/* Ningun elemento debe poder generar scroll horizontal en la pagina. */
+html,
+body {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+/* Los titulares largos (nombres de producto, mails de cliente) no rompen
+   la grilla en pantallas angostas. */
+body {
+  overflow-wrap: break-word;
+}
+
+/* Evita el zoom automatico de iOS al enfocar un input: Safari hace zoom si la
+   fuente mide menos de 16px. En pantallas chicas forzamos ese minimo. */
+@media (max-width: 640px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
+/* Respeto por quien pidio menos movimiento en el sistema operativo. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Area segura del notch / barra gestual, para barras fijas y drawers. */
+@utility pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@utility pt-safe {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+/* Scroller horizontal sin barra visible (chips de categoria, nav del panel). */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }

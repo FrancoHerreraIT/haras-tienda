@@ -1,0 +1,94 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  password  String   
+  role      String   @default("ADMIN") 
+  createdAt DateTime @default(now())
+}
+
+model Category {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  description String?
+  products    Product[] 
+}
+
+model Product {
+  id             String          @id @default(uuid())
+  title          String
+  description    String?
+  price          Decimal         @db.Decimal(10, 2)
+  stock          Int             @default(0)
+  /// Fotos del producto. La primera es la portada: es la que se ve en el
+  /// listado, el carrito y el checkout. El resto son la galeria del detalle.
+  images         String[]
+  isActive       Boolean         @default(true) 
+  
+  categoryId     String
+  category       Category        @relation(fields: [categoryId], references: [id])
+  
+  orderItems     OrderItem[]
+  stockMovements StockMovement[] 
+}
+
+model Order {
+  id              String           @id @default(uuid())
+  customerName    String
+  customerEmail   String
+  customerPhone   String
+  status          String           @default("pending") 
+  totalAmount     Decimal          @db.Decimal(10, 2)
+  mpPreferenceId  String?          @unique
+  
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt 
+  
+  items           OrderItem[]      
+  statusLogs      OrderStatusLog[] 
+}
+
+model OrderItem {
+  id              String   @id @default(uuid())
+  quantity        Int
+  priceAtPurchase Decimal  @db.Decimal(10, 2) 
+  
+  orderId         String
+  order           Order    @relation(fields: [orderId], references: [id])
+  
+  productId       String
+  product         Product  @relation(fields: [productId], references: [id])
+}
+
+model StockMovement {
+  id          String   @id @default(uuid())
+  type        String   
+  quantity    Int      
+  reason      String   
+  referenceId String?  
+  
+  createdAt   DateTime @default(now()) 
+
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id])
+}
+
+model OrderStatusLog {
+  id          String   @id @default(uuid())
+  status      String   
+  notes       String?  
+  
+  createdAt   DateTime @default(now()) 
+
+  orderId     String
+  order       Order    @relation(fields: [orderId], references: [id])
+}
