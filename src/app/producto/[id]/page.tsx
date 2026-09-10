@@ -9,7 +9,12 @@ import CartDrawer from "@/components/CartDrawer";
 import ProductCard from "@/components/ProductCard";
 import ProductGallery from "@/components/ProductGallery";
 import AddToCartButton from "@/components/AddToCartButton";
-import { getStoreProduct, portada } from "@/app/lib/storeData";
+import {
+  getStoreCategories,
+  getStoreProduct,
+  portada,
+} from "@/app/lib/storeData";
+import { hrefCategoria } from "@/app/lib/search";
 
 /* La ficha sale de la base en cada visita, igual que el listado. */
 export const dynamic = "force-dynamic";
@@ -45,7 +50,11 @@ export default async function ProductoPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const data = await getStoreProduct(id);
+  /* Las categorias son para la barra del Navbar, que tambien vive aca. */
+  const [data, categories] = await Promise.all([
+    getStoreProduct(id),
+    getStoreCategories(),
+  ]);
 
   /* Producto inexistente o despublicado: 404, no una ficha vacia. */
   if (!data) notFound();
@@ -56,7 +65,7 @@ export default async function ProductoPage({
 
   return (
     <div className="min-h-screen w-full bg-[#F7F5F0] text-stone-800">
-      <Navbar />
+      <Navbar categories={categories} />
 
       <main className="w-full px-4 md:px-12 lg:px-24 xl:px-32 py-6 md:py-10">
         {/* Migas de pan */}
@@ -65,7 +74,12 @@ export default async function ProductoPage({
             Inicio
           </Link>
           <ChevronRight className="h-3 w-3 shrink-0 text-stone-300" />
-          <Link href="/#productos" className="py-1 transition-colors hover:text-amber-800">
+          {/* Ahora la miga cumple lo que promete: lleva al catalogo filtrado
+              por el rubro del producto, no a la home. */}
+          <Link
+            href={hrefCategoria(product.categoryId)}
+            className="py-1 transition-colors hover:text-amber-800"
+          >
             {product.categoryName}
           </Link>
           <ChevronRight className="h-3 w-3 shrink-0 text-stone-300" />
@@ -76,7 +90,7 @@ export default async function ProductoPage({
           <ProductGallery images={product.images} title={product.title} />
 
           <div className="lg:pt-2">
-            <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-amber-800/80">
+            <span className="text-[11px] font-semibold tracking-wide text-amber-800/80">
               {product.categoryName}
             </span>
             <h1 className="mt-2 font-[family-name:var(--font-display)] text-2xl leading-tight text-stone-900 sm:text-3xl md:text-4xl">
@@ -108,7 +122,7 @@ export default async function ProductoPage({
 
             {product.description && (
               <section className="mt-8 border-t border-stone-200 pt-7">
-                <h2 className="text-[11px] font-semibold uppercase tracking-[0.24em] text-stone-500">
+                <h2 className="text-[11px] font-semibold tracking-wide text-stone-500">
                   Descripcion
                 </h2>
                 <p className="mt-3 whitespace-pre-line text-[15px] leading-relaxed text-stone-700">
@@ -120,7 +134,7 @@ export default async function ProductoPage({
             {/* Ficha tecnica: por ahora lo que hay en la base. Cuando se
                 agreguen atributos al producto, se suman como filas aca. */}
             <section className="mt-8 border-t border-stone-200 pt-7">
-              <h2 className="text-[11px] font-semibold uppercase tracking-[0.24em] text-stone-500">
+              <h2 className="text-[11px] font-semibold tracking-wide text-stone-500">
                 Detalles
               </h2>
               <dl className="mt-3 divide-y divide-stone-200 text-sm">

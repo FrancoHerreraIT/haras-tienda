@@ -31,7 +31,7 @@ function DataRow({
 
   return (
     <div className="flex items-center justify-between gap-3 border-b border-stone-200/70 py-2.5 last:border-b-0">
-      <span className="text-[11px] uppercase tracking-[0.16em] text-stone-500 shrink-0">
+      <span className="text-[11px] tracking-wide text-stone-500 shrink-0">
         {label}
       </span>
       <span className="flex items-center gap-2 min-w-0">
@@ -86,7 +86,7 @@ export default function TransferPanel() {
 
       {/* Paso que el cliente no puede saltear */}
       <div className="mt-5 rounded-lg border border-amber-800/20 bg-amber-50/70 p-4">
-        <p className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-amber-900">
+        <p className="flex items-center gap-2 text-[11px] font-semibold tracking-wide text-amber-900">
           <MessageCircle className="h-3.5 w-3.5" />
           Importante
         </p>

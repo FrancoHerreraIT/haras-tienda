@@ -70,12 +70,12 @@ export default function ProductCard({ product }: ProductCardProps) {
         />
 
         {agotado && (
-          <span className="absolute top-2 left-2 z-20 rounded-full bg-[#1C1A19]/90 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-stone-100">
+          <span className="absolute top-2 left-2 z-20 rounded-full bg-[#1C1A19]/90 px-2.5 py-1 text-[10px] font-semibold tracking-wide text-stone-100">
             Sin stock
           </span>
         )}
         {ultimasUnidades && (
-          <span className="absolute top-2 left-2 z-20 rounded-full bg-amber-700 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-white">
+          <span className="absolute top-2 left-2 z-20 rounded-full bg-amber-700 px-2.5 py-1 text-[10px] font-semibold tracking-wide text-white">
             Últimas {product.stock}
           </span>
         )}
@@ -128,7 +128,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       </div>
 
       <div className="flex-1 flex flex-col">
-        <span className="text-[11px] text-amber-800/80 font-semibold uppercase tracking-[0.2em]">
+        <span className="text-[11px] text-amber-800/80 font-semibold tracking-wide">
           {product.categoryName}
         </span>
         <h3 className="text-[14px] sm:text-[15px] leading-snug mt-1.5 mb-3 sm:mb-4 line-clamp-2 min-h-[2.6em]">
@@ -163,7 +163,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                 ? `${product.title} sin stock`
                 : `Sumar ${product.title} al carrito`
             }
-            className="w-full bg-[#8B5A2B] hover:bg-[#6b4421] active:scale-[0.98] disabled:bg-stone-200 disabled:text-stone-400 disabled:cursor-not-allowed disabled:active:scale-100 text-[#F7F5F0] font-semibold uppercase tracking-[0.08em] sm:tracking-[0.1em] py-3 sm:py-3.5 rounded-lg text-[12px] sm:text-[13px] flex items-center justify-center gap-1.5 sm:gap-2 transition-all"
+            className="w-full bg-[#8B5A2B] hover:bg-[#6b4421] active:scale-[0.98] disabled:bg-stone-200 disabled:text-stone-400 disabled:cursor-not-allowed disabled:active:scale-100 text-[#F7F5F0] font-semibold tracking-wide py-3 sm:py-3.5 rounded-lg text-[12px] sm:text-[13px] flex items-center justify-center gap-1.5 sm:gap-2 transition-all"
           >
             {!agotado && <ShoppingCart className="w-4 h-4 shrink-0" />}
             <span className="truncate">

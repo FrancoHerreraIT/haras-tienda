@@ -78,7 +78,7 @@ export default async function AdminDashboardPage() {
   return (
     <div className="mx-auto max-w-6xl">
       <header className="border-b border-stone-200 pb-6">
-        <span className="text-[10px] font-semibold uppercase tracking-[0.32em] text-[#8B5A2B]">
+        <span className="text-[10px] font-semibold tracking-wide text-[#8B5A2B]">
           Backoffice
         </span>
         <h1 className="mt-2 font-[family-name:var(--font-display)] text-2xl text-stone-900 sm:text-3xl md:text-4xl">
@@ -97,7 +97,7 @@ export default async function AdminDashboardPage() {
             className="rounded-xl border border-stone-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
           >
             <div className="flex items-start justify-between gap-3">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-stone-500">
+              <p className="text-[11px] font-semibold tracking-wide text-stone-500">
                 {label}
               </p>
               <span className="rounded-lg bg-[#8B5A2B]/10 p-2 text-[#8B5A2B]">

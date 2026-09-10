@@ -4,13 +4,15 @@ import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { ChevronDown, PackageSearch, SearchX, X } from "lucide-react";
 import ProductCard from "./ProductCard";
-import { SEARCH_PARAM, filtrarProductos } from "@/app/lib/search";
+import {
+  SEARCH_PARAM,
+  TODAS_LAS_CATEGORIAS,
+  filtrarProductos,
+} from "@/app/lib/search";
+import { useCategoryNav } from "@/app/lib/useCategoryNav";
 import type { StoreCategory, StoreProduct } from "@/app/lib/storeData";
 
 type SortOption = "destacados" | "menor-precio" | "mayor-precio";
-
-/** Filtro "sin filtro": no es una categoria de la base, es el estado inicial. */
-const ALL = "todos";
 
 type ProductGridProps = {
   products: StoreProduct[];
@@ -18,7 +20,6 @@ type ProductGridProps = {
 };
 
 export default function ProductGrid({ products, categories }: ProductGridProps) {
-  const [activeCategory, setActiveCategory] = useState<string>(ALL);
   const [sortOption, setSortOption] = useState<SortOption>("destacados");
 
   /* Lo que se escribio en el buscador del Navbar. Viaja por la URL, no por
@@ -27,26 +28,28 @@ export default function ProductGrid({ products, categories }: ProductGridProps) 
   const consulta = (searchParams.get(SEARCH_PARAM) ?? "").trim();
   const buscando = consulta.length > 0;
 
-  /* Una busqueda nueva empieza mirando todo el catalogo: si quedara puesta la
-     categoria anterior, lo encontrado fuera de ella no se veria. Se ajusta
-     durante el render, que es mas barato que un efecto que dispare un
-     segundo render (react.dev, "You Might Not Need an Effect"). */
-  const [ultimaConsulta, setUltimaConsulta] = useState(consulta);
-  if (ultimaConsulta !== consulta) {
-    setUltimaConsulta(consulta);
-    setActiveCategory(ALL);
-  }
+  /* La categoria tambien viaja por la URL: la elige este listado o la barra
+     del Navbar, que es un hermano y no le podria pasar props.
+     Una busqueda nueva vuelve sola a "todos" porque hrefBusqueda arma la URL
+     sin `cat`; si quedara puesto el rubro anterior, lo encontrado fuera de el
+     no se veria. */
+  const { activa: activeCategory, hrefDe, elegir } = useCategoryNav();
 
+  /* Sin filtro esto es el catalogo entero, asi que se llama por su nombre.
+     "Destacados" quedo para la vidriera de la home, que si es un recorte.
+     El fallback cubre un `?cat=` viejo cuyo rubro ya no existe: antes decia
+     "Destacados" sobre una grilla vacia. */
   const activeName = buscando
     ? "Resultados"
-    : activeCategory === ALL
-      ? "Destacados"
-      : (categories.find((c) => c.id === activeCategory)?.name ?? "Destacados");
+    : activeCategory === TODAS_LAS_CATEGORIAS
+      ? "Todos los productos"
+      : (categories.find((c) => c.id === activeCategory)?.name ??
+        "Todos los productos");
 
   const visible = useMemo(() => {
     let list = filtrarProductos(products, consulta);
 
-    if (activeCategory !== ALL) {
+    if (activeCategory !== TODAS_LAS_CATEGORIAS) {
       list = list.filter((p) => p.categoryId === activeCategory);
     }
 
@@ -105,7 +108,7 @@ export default function ProductGrid({ products, categories }: ProductGridProps) 
   }
 
   const categoryOptions = [
-    { id: ALL, name: "Todos" },
+    { id: TODAS_LAS_CATEGORIAS, name: "Todos" },
     ...categories.map((c) => ({ id: c.id, name: c.name })),
   ];
 
@@ -121,23 +124,25 @@ export default function ProductGrid({ products, categories }: ProductGridProps) 
         </h2>
         <span className="block w-12 h-px bg-[#8B5A2B] mb-8" />
         {chipBusqueda}
-        <p className="text-[11px] uppercase tracking-[0.28em] text-amber-800 font-semibold mb-5">
+        <p className="text-[11px] tracking-wide text-amber-800 font-semibold mb-5">
           Categorías
         </p>
         <ul className="space-y-3 text-[15px] text-stone-600">
           {categoryOptions.map((cat) => (
             <li key={cat.id}>
-              <button
-                type="button"
-                onClick={() => setActiveCategory(cat.id)}
-                className={`text-left w-full py-1 transition-colors ${
+              {/* Aca el listado ya esta a la vista: se filtra sin scrollear. */}
+              <a
+                href={hrefDe(cat.id)}
+                onClick={(evento) => elegir(evento, cat.id, { scroll: false })}
+                aria-current={activeCategory === cat.id ? "true" : undefined}
+                className={`block text-left w-full py-1 transition-colors ${
                   activeCategory === cat.id
                     ? "text-amber-800 font-semibold"
                     : "hover:text-amber-800"
                 }`}
               >
                 {cat.name}
-              </button>
+              </a>
             </li>
           ))}
         </ul>
@@ -163,11 +168,11 @@ export default function ProductGrid({ products, categories }: ProductGridProps) 
             {categoryOptions.map((cat) => {
               const isActive = activeCategory === cat.id;
               return (
-                <button
+                <a
                   key={cat.id}
-                  type="button"
-                  onClick={() => setActiveCategory(cat.id)}
-                  aria-pressed={isActive}
+                  href={hrefDe(cat.id)}
+                  onClick={(evento) => elegir(evento, cat.id, { scroll: false })}
+                  aria-current={isActive ? "true" : undefined}
                   className={`shrink-0 rounded-full border px-4 py-2.5 text-[13px] whitespace-nowrap transition-colors ${
                     isActive
                       ? "border-[#8B5A2B] bg-[#8B5A2B] text-[#F7F5F0] font-semibold"
@@ -175,7 +180,7 @@ export default function ProductGrid({ products, categories }: ProductGridProps) 
                   }`}
                 >
                   {cat.name}
-                </button>
+                </a>
               );
             })}
           </div>
@@ -228,7 +233,7 @@ export default function ProductGrid({ products, categories }: ProductGridProps) 
             <button
               type="button"
               onClick={limpiarBusqueda}
-              className="mt-4 rounded-lg bg-[#8B5A2B] px-6 py-3 text-[12px] font-semibold uppercase tracking-[0.14em] text-[#F7F5F0] transition-colors hover:bg-[#6b4421]"
+              className="mt-4 rounded-lg bg-[#8B5A2B] px-6 py-3 text-[12px] font-semibold tracking-wide text-[#F7F5F0] transition-colors hover:bg-[#6b4421]"
             >
               Ver todo el catálogo
             </button>

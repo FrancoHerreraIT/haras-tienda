@@ -3,7 +3,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Search } from "lucide-react";
-import { SEARCH_PARAM, hrefBusqueda } from "@/app/lib/search";
+import { RUTA_CATALOGO, SEARCH_PARAM, hrefBusqueda } from "@/app/lib/search";
 
 /* Cuanto se espera despues de la ultima tecla antes de tocar la URL. */
 const ESPERA_MS = 250;
@@ -20,15 +20,15 @@ type SearchBoxProps = {
 /**
  * Buscador de la tienda.
  *
- * La consulta vive en la URL (`/?q=cuchillo`), no en un estado suelto: asi el
- * resultado se puede compartir por link, el boton "atras" vuelve a la busqueda
- * anterior, y el listado la lee con useSearchParams.
+ * La consulta vive en la URL (`/productos?q=cuchillo`), no en un estado suelto:
+ * asi el resultado se puede compartir por link, el boton "atras" vuelve a la
+ * busqueda anterior, y el listado la lee con useSearchParams.
  *
- * Estando en la home la URL se actualiza con `history.replaceState`, que Next
- * engancha al router sin ir al servidor (ver "Native History API" en la doc de
- * navegacion): el filtrado es instantaneo porque el catalogo ya esta en el
- * cliente. Desde la ficha de un producto no hay listado que filtrar, asi que
- * ahi recien se navega a la home al confirmar.
+ * Estando en el catalogo la URL se actualiza con `history.replaceState`, que
+ * Next engancha al router sin ir al servidor (ver "Native History API" en la
+ * doc de navegacion): el filtrado es instantaneo porque los productos ya estan
+ * en el cliente. Desde cualquier otra pagina no hay listado que filtrar, asi
+ * que ahi recien se navega al catalogo al confirmar.
  */
 export default function SearchBox({
   placeholder,
@@ -44,7 +44,7 @@ export default function SearchBox({
 
   const consultaEnUrl = searchParams.get(SEARCH_PARAM) ?? "";
   const [texto, setTexto] = useState(consultaEnUrl);
-  const enHome = pathname === "/";
+  const enCatalogo = pathname === RUTA_CATALOGO;
 
   /* La URL manda: si cambio por el boton "atras" o porque el listado limpio
      la busqueda, el input se pone al dia. Se ajusta durante el render y no
@@ -60,28 +60,28 @@ export default function SearchBox({
   }
 
   /* Filtrado mientras se escribe, con una pausa para no reescribir la URL en
-     cada tecla. Solo en la home: en otra pagina no hay nada que filtrar. */
+     cada tecla. Solo en el catalogo: en otra pagina no hay nada que filtrar. */
   useEffect(() => {
-    if (!enHome || texto.trim() === consultaEnUrl) return;
+    if (!enCatalogo || texto.trim() === consultaEnUrl) return;
 
     const temporizador = setTimeout(() => {
       window.history.replaceState(null, "", hrefBusqueda(texto));
     }, ESPERA_MS);
 
     return () => clearTimeout(temporizador);
-  }, [texto, consultaEnUrl, enHome]);
+  }, [texto, consultaEnUrl, enCatalogo]);
 
   const confirmar = (evento: React.FormEvent) => {
     evento.preventDefault();
 
-    if (enHome) {
+    if (enCatalogo) {
       /* Puede haber un debounce a mitad de camino: se aplica ya. */
       window.history.replaceState(null, "", hrefBusqueda(texto));
       document
         .getElementById("productos")
         ?.scrollIntoView({ behavior: "smooth", block: "start" });
     } else {
-      router.push(`${hrefBusqueda(texto)}#productos`);
+      router.push(hrefBusqueda(texto));
     }
 
     /* En el telefono el teclado tapa media pantalla: se cierra para que se

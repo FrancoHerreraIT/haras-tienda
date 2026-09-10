@@ -37,7 +37,7 @@ export default async function ProductosPage() {
   return (
     <div className="mx-auto max-w-6xl">
       <header className="border-b border-stone-200 pb-6">
-        <span className="text-[10px] font-semibold uppercase tracking-[0.32em] text-[#8B5A2B]">
+        <span className="text-[10px] font-semibold tracking-wide text-[#8B5A2B]">
           Backoffice
         </span>
         <h1 className={`${headingClass} mt-2 text-2xl sm:text-3xl`}>Productos</h1>

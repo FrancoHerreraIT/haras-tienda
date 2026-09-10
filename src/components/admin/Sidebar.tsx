@@ -46,7 +46,7 @@ export default function Sidebar({ userName, userEmail }: SidebarProps) {
           >
             Haras del Este
           </span>
-          <span className="mt-1.5 block pl-1 text-[9px] uppercase tracking-[0.42em] text-amber-700/90">
+          <span className="mt-1.5 block pl-1 text-[9px] tracking-wide text-amber-700/90">
             Backoffice
           </span>
         </Link>

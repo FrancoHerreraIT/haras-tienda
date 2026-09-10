@@ -109,7 +109,7 @@ export default function CartDrawer() {
                   </div>
 
                   <div className="flex-1 min-w-0">
-                    <span className="text-[10px] text-stone-400 font-bold uppercase tracking-widest">
+                    <span className="text-[10px] text-stone-400 font-bold tracking-wide">
                       {item.categoryName}
                     </span>
                     <h4 className="text-sm font-medium text-stone-800 leading-snug line-clamp-2 mb-2">
@@ -175,7 +175,7 @@ export default function CartDrawer() {
             <button
               type="button"
               onClick={goToCheckout}
-              className="w-full bg-[#8B5A2B] hover:bg-[#6b4421] active:scale-[0.98] text-[#F7F5F0] font-semibold uppercase tracking-[0.14em] py-4 rounded-lg text-sm transition-all shadow-sm"
+              className="w-full bg-[#8B5A2B] hover:bg-[#6b4421] active:scale-[0.98] text-[#F7F5F0] font-semibold tracking-wide py-4 rounded-lg text-sm transition-all shadow-sm"
             >
               Iniciar compra
             </button>

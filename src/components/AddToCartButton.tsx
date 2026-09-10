@@ -42,7 +42,7 @@ export default function AddToCartButton({
       <button
         type="button"
         disabled
-        className="w-full cursor-not-allowed rounded-lg bg-stone-200 py-4 text-sm font-semibold uppercase tracking-[0.14em] text-stone-400"
+        className="w-full cursor-not-allowed rounded-lg bg-stone-200 py-4 text-sm font-semibold tracking-wide text-stone-400"
       >
         Sin stock
       </button>
@@ -78,7 +78,7 @@ export default function AddToCartButton({
       <button
         type="button"
         onClick={sumar}
-        className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-4 text-sm font-semibold uppercase tracking-[0.14em] text-[#F7F5F0] transition-all active:scale-[0.99] ${
+        className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-4 text-sm font-semibold tracking-wide text-[#F7F5F0] transition-all active:scale-[0.99] ${
           sumado ? "bg-emerald-700" : "bg-[#8B5A2B] hover:bg-[#6b4421]"
         }`}
       >

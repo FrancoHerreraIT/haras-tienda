@@ -1,8 +1,6 @@
-import { Suspense } from "react";
-
 import Navbar from "@/components/Navbar";
 import HeroCarousel from "@/components/HeroCarousel";
-import ProductGrid from "@/components/ProductGrid";
+import FeaturedProducts from "@/components/FeaturedProducts";
 import CartDrawer from "@/components/CartDrawer";
 import Footer from "@/components/Footer";
 import { getStoreCatalog } from "@/app/lib/storeData";
@@ -16,13 +14,11 @@ export default async function Home() {
 
   return (
     <div className="min-h-screen w-full bg-[#F7F5F0] text-stone-800">
-      <Navbar />
+      <Navbar categories={categories} />
       <HeroCarousel />
-      {/* El listado lee la busqueda de la URL con useSearchParams; Next pide
-          que eso viva dentro de un Suspense. */}
-      <Suspense fallback={<div className="min-h-[60vh]" />}>
-        <ProductGrid products={products} categories={categories} />
-      </Suspense>
+      {/* Solo una vidriera: el catalogo con filtros, orden y busqueda vive en
+          /productos, que es a donde llevan las categorias y el buscador. */}
+      <FeaturedProducts products={products} />
       <Footer />
       <CartDrawer />
     </div>

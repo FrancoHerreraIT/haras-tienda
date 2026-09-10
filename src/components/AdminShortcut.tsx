@@ -38,7 +38,7 @@ export default function AdminShortcut() {
   return (
     <Link
       href="/admin"
-      className="flex items-center gap-2 rounded-full border border-[#8B5A2B] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-amber-100 transition-colors hover:bg-[#8B5A2B]"
+      className="flex items-center gap-2 rounded-full border border-[#8B5A2B] px-3 py-1.5 text-[11px] font-semibold tracking-wide text-amber-100 transition-colors hover:bg-[#8B5A2B]"
     >
       <LayoutDashboard className="h-3.5 w-3.5" />
       <span className="hidden sm:inline">Panel</span>
