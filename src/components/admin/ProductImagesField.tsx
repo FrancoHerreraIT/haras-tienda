@@ -274,7 +274,7 @@ export default function ProductImagesField({
                   />
 
                   {indice === 0 && (
-                    <span className="absolute left-1 top-1 inline-flex items-center gap-1 rounded-full bg-[#8B5A2B] px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-stone-50">
+                    <span className="absolute left-1 top-1 inline-flex items-center gap-1 rounded-full bg-[#8B5A2B] px-1.5 py-0.5 text-[9px] font-semibold tracking-wide text-stone-50">
                       <Star className="h-2.5 w-2.5" />
                       Portada
                     </span>
@@ -333,7 +333,7 @@ export default function ProductImagesField({
             type="button"
             onClick={() => inputRef.current?.click()}
             disabled={ocupado || urls.length >= MAX_FOTOS}
-            className="inline-flex items-center gap-2 rounded-lg border border-stone-300 px-3.5 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-stone-600 transition-colors hover:bg-stone-100 disabled:opacity-60 sm:py-2"
+            className="inline-flex items-center gap-2 rounded-lg border border-stone-300 px-3.5 py-3 text-xs font-semibold tracking-wide text-stone-600 transition-colors hover:bg-stone-100 disabled:opacity-60 sm:py-2"
           >
             {ocupado ? (
               <Loader2 className="h-3.5 w-3.5 animate-spin" />

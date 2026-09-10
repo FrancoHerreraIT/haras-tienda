@@ -3,13 +3,32 @@ import type { StoreProduct } from "@/app/lib/storeData";
 /**
  * Busqueda de la tienda.
  *
- * La consulta viaja en la URL (`/?q=cuchillo`) y el filtrado se resuelve en el
- * cliente: el listado ya tiene el catalogo completo en memoria, asi que no
- * hace falta volver al servidor por cada tecla.
+ * La consulta viaja en la URL (`/productos?q=cuchillo`) y el filtrado se
+ * resuelve en el cliente: el listado ya tiene el catalogo completo en memoria,
+ * asi que no hace falta volver al servidor por cada tecla.
  */
+
+/**
+ * Donde vive el catalogo.
+ *
+ * Filtrar y buscar llevan aca. Antes las dos cosas reescribian la home y
+ * scrolleaban hasta la grilla: se cambiaba el contenido debajo de los pies sin
+ * cambiar de pagina, y no habia URL propia del catalogo para compartir ni para
+ * que el boton "atras" distinguiera de la portada.
+ */
+export const RUTA_CATALOGO = "/productos";
 
 /** Nombre del parametro donde viaja la consulta. */
 export const SEARCH_PARAM = "q";
+
+/** Nombre del parametro donde viaja la categoria elegida. */
+export const CATEGORY_PARAM = "cat";
+
+/**
+ * Filtro "sin filtro". No es una categoria de la base sino el estado inicial,
+ * y por eso no se escribe en la URL: `/` ya significa "todo el catalogo".
+ */
+export const TODAS_LAS_CATEGORIAS = "todos";
 
 /* Las tildes que `normalize("NFD")` deja sueltas como caracteres aparte.
    Va como cadena y no como literal /[...]/ porque son caracteres invisibles:
@@ -44,8 +63,37 @@ export function filtrarProductos(
   });
 }
 
-/** URL de la tienda para una consulta dada; sin consulta, la home limpia. */
+/** URL del catalogo para una consulta dada; sin consulta, el catalogo entero. */
 export function hrefBusqueda(consulta: string): string {
   const limpio = consulta.trim();
-  return limpio ? `/?${SEARCH_PARAM}=${encodeURIComponent(limpio)}` : "/";
+  return limpio
+    ? `${RUTA_CATALOGO}?${SEARCH_PARAM}=${encodeURIComponent(limpio)}`
+    : RUTA_CATALOGO;
+}
+
+/**
+ * URL de la tienda filtrada por categoria.
+ *
+ * Conserva la busqueda activa (se puede acotar un resultado a un rubro) y
+ * omite el parametro cuando la categoria es "todos", asi `/productos` queda
+ * limpio en vez de arrastrar un `?cat=todos` que no filtra nada.
+ *
+ * `params` se tipa por su forma y no como URLSearchParams para poder recibir
+ * tambien el ReadonlyURLSearchParams que devuelve useSearchParams.
+ */
+export function hrefCategoria(
+  categoriaId: string,
+  params?: { get(nombre: string): string | null } | null,
+): string {
+  const query = new URLSearchParams();
+
+  const consulta = params?.get(SEARCH_PARAM)?.trim();
+  if (consulta) query.set(SEARCH_PARAM, consulta);
+
+  if (categoriaId !== TODAS_LAS_CATEGORIAS) {
+    query.set(CATEGORY_PARAM, categoriaId);
+  }
+
+  const cadena = query.toString();
+  return cadena ? `${RUTA_CATALOGO}?${cadena}` : RUTA_CATALOGO;
 }

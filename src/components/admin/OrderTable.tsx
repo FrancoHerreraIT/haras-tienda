@@ -38,7 +38,7 @@ function StatusBadge({ status }: { status: string }) {
   const meta = statusMeta(status);
   return (
     <span
-      className={`inline-flex rounded-full border px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider ${meta.className}`}
+      className={`inline-flex rounded-full border px-2.5 py-1 text-[11px] font-semibold tracking-wide ${meta.className}`}
     >
       {meta.label}
     </span>
@@ -112,7 +112,7 @@ export default function OrderTable({ rows }: { rows: OrderRow[] }) {
             <div className="hidden overflow-x-auto lg:block">
             <table className="w-full text-left text-sm">
               <thead className="border-b border-stone-200 bg-stone-50/80">
-                <tr className="text-[11px] uppercase tracking-[0.14em] text-stone-500">
+                <tr className="text-[11px] tracking-wide text-stone-500">
                   <th className="px-4 py-3 font-semibold">Pedido</th>
                   <th className="px-4 py-3 font-semibold">Cliente</th>
                   <th className="px-4 py-3 font-semibold">Fecha</th>
@@ -215,7 +215,7 @@ export default function OrderTable({ rows }: { rows: OrderRow[] }) {
 
             {/* Items comprados */}
             <section>
-              <h3 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-stone-500">
+              <h3 className="mb-3 text-[11px] font-semibold tracking-wide text-stone-500">
                 Productos
               </h3>
               <div className="overflow-hidden rounded-lg border border-stone-200 bg-white">
@@ -242,7 +242,7 @@ export default function OrderTable({ rows }: { rows: OrderRow[] }) {
                     <tr>
                       <td
                         colSpan={2}
-                        className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-stone-500"
+                        className="px-4 py-3 text-[11px] font-semibold tracking-wide text-stone-500"
                       >
                         Total
                       </td>
@@ -262,7 +262,7 @@ export default function OrderTable({ rows }: { rows: OrderRow[] }) {
             {/* Historial de estados */}
             {detail.statusLogs.length > 0 && (
               <section>
-                <h3 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-stone-500">
+                <h3 className="mb-3 text-[11px] font-semibold tracking-wide text-stone-500">
                   Historial
                 </h3>
                 <ol className="space-y-4 border-l border-stone-200 pl-5">

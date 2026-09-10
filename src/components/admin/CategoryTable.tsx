@@ -111,7 +111,7 @@ export default function CategoryTable({ rows }: { rows: CategoryRow[] }) {
             <div className="hidden overflow-x-auto lg:block">
             <table className="w-full text-left text-sm">
               <thead className="border-b border-stone-200 bg-stone-50/80">
-                <tr className="text-[11px] uppercase tracking-[0.14em] text-stone-500">
+                <tr className="text-[11px] tracking-wide text-stone-500">
                   <th className="px-4 py-3 font-semibold">Nombre</th>
                   <th className="px-4 py-3 font-semibold">Descripcion</th>
                   <th className="px-4 py-3 font-semibold">Productos</th>

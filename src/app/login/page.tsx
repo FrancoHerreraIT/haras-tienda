@@ -31,7 +31,7 @@ export default async function LoginPage() {
           >
             Haras del Este
           </span>
-          <span className="block text-[9px] sm:text-[10px] uppercase tracking-[0.3em] sm:tracking-[0.42em] text-amber-700/90 mt-2">
+          <span className="block text-[9px] sm:text-[10px] tracking-wide text-amber-700/90 mt-2">
             Panel de Administracion
           </span>
         </div>
@@ -56,7 +56,7 @@ export default async function LoginPage() {
           </div>
         </div>
 
-        <p className="mt-6 text-center text-[11px] uppercase tracking-[0.2em] text-stone-600">
+        <p className="mt-6 text-center text-[11px] tracking-wide text-stone-600">
           Cocina · Campo · Hogar
         </p>
       </div>

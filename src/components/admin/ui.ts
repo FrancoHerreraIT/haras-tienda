@@ -9,7 +9,7 @@
 /* py-3 en mobile deja el boton en ~44px de alto (guia tactil de iOS/Android);
    desde sm vuelve a la altura compacta del escritorio. */
 export const btnBase =
-  "inline-flex items-center justify-center gap-2 rounded-lg px-4 py-3 sm:py-2.5 text-xs font-semibold uppercase tracking-[0.16em] transition-colors disabled:opacity-60 disabled:pointer-events-none";
+"inline-flex items-center justify-center gap-2 rounded-lg px-4 py-3 sm:py-2.5 text-xs font-semibold tracking-wide transition-colors disabled:opacity-60 disabled:pointer-events-none";
 
 export const btnPrimary = `${btnBase} bg-[#1C1A19] text-stone-50 hover:bg-[#8B5A2B]`;
 
@@ -25,7 +25,7 @@ export const inputClass =
   "w-full rounded-lg border border-stone-300 bg-white px-4 py-2.5 text-sm text-stone-800 placeholder:text-stone-400 focus:border-[#8B5A2B] focus:outline-none focus:ring-2 focus:ring-[#8B5A2B]/20 transition-colors";
 
 export const labelClass =
-  "block text-[11px] font-semibold uppercase tracking-[0.18em] text-stone-500 mb-2";
+"block text-[11px] font-semibold tracking-wide text-stone-500 mb-2";
 
 export const cardClass =
   "rounded-xl border border-stone-200 bg-white shadow-sm";

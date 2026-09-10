@@ -18,7 +18,7 @@ interface Slide {
 const slides: Slide[] = [
   {
     id: 1,
-    eyebrow: "HARAS DEL ESTE",
+    eyebrow: "Haras del Este",
     title: "Tradición en tu cocina y asador",
     subtitle:
       "Tablas, cuchillería y hierro forjado elegidos pieza por pieza para la mesa de campo.",
@@ -28,7 +28,7 @@ const slides: Slide[] = [
   },
   {
     id: 2,
-    eyebrow: "EDICIÓN LIMITADA",
+    eyebrow: "Edición limitada",
     title: "Cuchillería forjada a mano",
     subtitle:
       "Acero al carbono trabajado por artesanos. Estuche de cuero de regalo en cada compra.",
@@ -38,7 +38,7 @@ const slides: Slide[] = [
   },
   {
     id: 3,
-    eyebrow: "ENVÍOS A TODO EL PAÍS",
+    eyebrow: "Envíos a todo el país",
     title: "Armá tu kit de campo",
     subtitle:
       "Combos pensados para el asador exigente. Envío sin cargo en compras desde $80.000.",
@@ -148,7 +148,7 @@ export default function HeroCarousel() {
         {/* Contenido */}
         <div className="relative z-10 flex flex-col justify-center w-full px-5 sm:px-8 md:px-16 lg:px-20 py-12 sm:py-16 md:py-24">
           <div className="max-w-2xl">
-            <span className="inline-block text-[10px] sm:text-[11px] md:text-xs uppercase tracking-[0.28em] sm:tracking-[0.38em] text-amber-500/90 mb-3 sm:mb-5">
+            <span className="inline-block text-[10px] sm:text-[11px] md:text-xs tracking-wide text-amber-500/90 mb-3 sm:mb-5">
               {slides[active].eyebrow}
             </span>
             <h1 className="font-[family-name:var(--font-display)] text-[28px] sm:text-4xl md:text-6xl lg:text-7xl text-[#F7F5F0] leading-[1.12] md:leading-[1.08] mb-4 sm:mb-6 drop-shadow-[0_2px_12px_rgba(0,0,0,0.6)] text-balance">
@@ -159,7 +159,9 @@ export default function HeroCarousel() {
             </p>
             <button
               type="button"
-              className="w-full sm:w-auto bg-[#8B5A2B] hover:bg-[#6b4421] active:scale-[0.98] text-[#F7F5F0] font-semibold uppercase tracking-[0.14em] px-7 sm:px-9 py-4 rounded-lg text-xs md:text-sm transition-all shadow-lg shadow-black/30"
+              /* En el telefono el boton quedaba pegado al parrafo: se lo baja
+                 dentro del hero para que respire. En sm+ ya estaba bien. */
+              className="mt-8 sm:mt-0 w-full sm:w-auto bg-[#8B5A2B] hover:bg-[#6b4421] active:scale-[0.98] text-[#F7F5F0] font-semibold tracking-wide px-7 sm:px-9 py-4 rounded-lg text-xs md:text-sm transition-all shadow-lg shadow-black/30"
             >
               {slides[active].cta}
             </button>

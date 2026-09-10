@@ -20,7 +20,7 @@ const inputClass =
   "w-full bg-white border border-stone-300 rounded-lg px-4 py-3 text-[15px] text-stone-800 placeholder:text-stone-400 focus:outline-none focus:border-amber-700 focus:ring-2 focus:ring-amber-700/40 transition-all";
 
 const labelClass =
-  "block text-[11px] uppercase tracking-[0.18em] text-stone-500 font-semibold mb-2";
+"block text-[11px] tracking-wide text-stone-500 font-semibold mb-2";
 
 interface FieldProps
   extends Omit<React.ComponentPropsWithoutRef<"input">, "id" | "className"> {
@@ -67,7 +67,7 @@ export default function CheckoutPage() {
               Haras del Este
             </span>
           </Link>
-          <span className="flex shrink-0 items-center gap-2 text-[10px] sm:text-[11px] uppercase tracking-[0.16em] sm:tracking-[0.24em] text-stone-400">
+          <span className="flex shrink-0 items-center gap-2 text-[10px] sm:text-[11px] tracking-wide text-stone-400">
             <Lock className="w-3.5 h-3.5 shrink-0 text-amber-700" />
             <span className="hidden min-[380px]:inline">Compra protegida</span>
             <span className="min-[380px]:hidden">Segura</span>
@@ -251,8 +251,8 @@ export default function CheckoutPage() {
                     Tu carrito está vacío.
                   </p>
                   <Link
-                    href="/#productos"
-                    className="inline-block bg-[#8B5A2B] hover:bg-[#6b4421] text-[#F7F5F0] font-semibold uppercase tracking-[0.14em] text-xs px-7 py-3 rounded-lg transition-colors"
+                    href="/productos"
+                    className="inline-block bg-[#8B5A2B] hover:bg-[#6b4421] text-[#F7F5F0] font-semibold tracking-wide text-xs px-7 py-3 rounded-lg transition-colors"
                   >
                     Ver productos
                   </Link>
@@ -283,7 +283,7 @@ export default function CheckoutPage() {
                         </div>
 
                         <div className="flex-1 min-w-0">
-                          <span className="text-[10px] text-amber-800/80 font-semibold uppercase tracking-[0.2em]">
+                          <span className="text-[10px] text-amber-800/80 font-semibold tracking-wide">
                             {item.categoryName}
                           </span>
                           <h3 className="text-sm text-stone-800 leading-snug line-clamp-2 mt-0.5">
@@ -320,7 +320,7 @@ export default function CheckoutPage() {
                     </div>
 
                     <div className="flex justify-between items-baseline border-t border-stone-200 pt-4 mt-4">
-                      <span className="text-[11px] uppercase tracking-[0.24em] text-stone-500 font-semibold">
+                      <span className="text-[11px] tracking-wide text-stone-500 font-semibold">
                         Total
                       </span>
                       <span className="font-[family-name:var(--font-display)] text-3xl text-stone-900 tabular-nums">

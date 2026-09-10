@@ -56,7 +56,7 @@ export default function Footer() {
             >
               Haras del Este
             </span>
-            <span className="block text-[10px] uppercase tracking-[0.42em] text-amber-700 mt-3 pl-1">
+            <span className="block text-[10px] tracking-wide text-amber-700 mt-3 pl-1">
               Cocina • Campo • Hogar
             </span>
             <p className="text-sm text-stone-400 leading-relaxed mt-6 max-w-xs">
@@ -67,7 +67,7 @@ export default function Footer() {
 
           {/* Columna 2 — Sucursales */}
           <div>
-            <h3 className="text-[11px] uppercase tracking-[0.28em] text-amber-700 font-semibold mb-6">
+            <h3 className="text-[11px] tracking-wide text-amber-700 font-semibold mb-6">
               Sucursales
             </h3>
             <ul className="space-y-5">
@@ -90,7 +90,7 @@ export default function Footer() {
 
           {/* Columna 3 — Redes y contacto */}
           <div>
-            <h3 className="text-[11px] uppercase tracking-[0.28em] text-amber-700 font-semibold mb-6">
+            <h3 className="text-[11px] tracking-wide text-amber-700 font-semibold mb-6">
               Seguinos
             </h3>
             <ul className="space-y-4">
@@ -130,7 +130,7 @@ export default function Footer() {
             © {new Date().getFullYear()} Haras del Este. Todos los derechos
             reservados.
           </p>
-          <p className="text-[10px] uppercase tracking-[0.3em] text-stone-600">
+          <p className="text-[10px] tracking-wide text-stone-600">
             Envíos a todo el país
           </p>
         </div>

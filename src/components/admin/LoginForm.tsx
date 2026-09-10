@@ -39,7 +39,7 @@ export default function LoginForm() {
       <div>
         <label
           htmlFor="email"
-          className="block text-[11px] font-semibold uppercase tracking-[0.18em] text-stone-500 mb-2"
+          className="block text-[11px] font-semibold tracking-wide text-stone-500 mb-2"
         >
           Email
         </label>
@@ -62,7 +62,7 @@ export default function LoginForm() {
       <div>
         <label
           htmlFor="password"
-          className="block text-[11px] font-semibold uppercase tracking-[0.18em] text-stone-500 mb-2"
+          className="block text-[11px] font-semibold tracking-wide text-stone-500 mb-2"
         >
           Contrasena
         </label>
@@ -94,7 +94,7 @@ export default function LoginForm() {
       <button
         type="submit"
         disabled={loading}
-        className="w-full flex items-center justify-center gap-2 rounded-lg bg-[#1C1A19] py-3.5 text-sm font-semibold uppercase tracking-[0.16em] text-stone-50 hover:bg-[#8B5A2B] disabled:opacity-60 disabled:hover:bg-[#1C1A19] transition-colors"
+        className="w-full flex items-center justify-center gap-2 rounded-lg bg-[#1C1A19] py-3.5 text-sm font-semibold tracking-wide text-stone-50 hover:bg-[#8B5A2B] disabled:opacity-60 disabled:hover:bg-[#1C1A19] transition-colors"
       >
         {loading && <Loader2 className="w-4 h-4 animate-spin" />}
         {loading ? "Verificando..." : "Ingresar al Panel"}

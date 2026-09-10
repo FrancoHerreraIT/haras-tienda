@@ -31,6 +31,29 @@ export type StoreCategory = {
   productCount: number;
 };
 
+/**
+ * Las categorias que se ofrecen como filtro.
+ *
+ * Sale aparte del catalogo porque la barra de categorias del Navbar tambien
+ * vive en la ficha de producto, donde traer todos los productos seria al pedo.
+ */
+export async function getStoreCategories(): Promise<StoreCategory[]> {
+  const categories = await prisma.category.findMany({
+    orderBy: { name: "asc" },
+    include: { _count: { select: { products: { where: { isActive: true } } } } },
+  });
+
+  /* Una categoria sin productos activos seria un filtro que no devuelve
+     nada: no se ofrece. */
+  return categories
+    .filter((category) => category._count.products > 0)
+    .map((category) => ({
+      id: category.id,
+      name: category.name,
+      productCount: category._count.products,
+    }));
+}
+
 export async function getStoreCatalog(): Promise<{
   products: StoreProduct[];
   categories: StoreCategory[];
@@ -42,10 +65,7 @@ export async function getStoreCatalog(): Promise<{
       /* Primero lo que se puede comprar: los agotados van al final. */
       orderBy: [{ stock: "desc" }, { title: "asc" }],
     }),
-    prisma.category.findMany({
-      orderBy: { name: "asc" },
-      include: { _count: { select: { products: { where: { isActive: true } } } } },
-    }),
+    getStoreCategories(),
   ]);
 
   return {
@@ -59,15 +79,7 @@ export async function getStoreCatalog(): Promise<{
       categoryId: product.categoryId,
       categoryName: product.category.name,
     })),
-    /* Una categoria sin productos activos seria un filtro que no devuelve
-       nada: no se ofrece. */
-    categories: categories
-      .filter((category) => category._count.products > 0)
-      .map((category) => ({
-        id: category.id,
-        name: category.name,
-        productCount: category._count.products,
-      })),
+    categories,
   };
 }
 

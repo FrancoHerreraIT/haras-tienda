@@ -164,11 +164,11 @@ export default function ProductTable({ rows, categories }: ProductTableProps) {
                     </div>
 
                     {row.isActive ? (
-                      <span className="h-fit shrink-0 rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-emerald-700">
+                      <span className="h-fit shrink-0 rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-semibold tracking-wide text-emerald-700">
                         Activo
                       </span>
                     ) : (
-                      <span className="h-fit shrink-0 rounded-full bg-stone-100 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-stone-500">
+                      <span className="h-fit shrink-0 rounded-full bg-stone-100 px-2.5 py-1 text-[10px] font-semibold tracking-wide text-stone-500">
                         Inactivo
                       </span>
                     )}
@@ -192,7 +192,7 @@ export default function ProductTable({ rows, categories }: ProductTableProps) {
             <div className="hidden overflow-x-auto lg:block">
             <table className="w-full text-left text-sm">
               <thead className="border-b border-stone-200 bg-stone-50/80">
-                <tr className="text-[11px] uppercase tracking-[0.14em] text-stone-500">
+                <tr className="text-[11px] tracking-wide text-stone-500">
                   <th className="px-4 py-3 font-semibold">Foto</th>
                   <th className="px-4 py-3 font-semibold">Producto</th>
                   <th className="px-4 py-3 font-semibold">Categoria</th>
@@ -236,11 +236,11 @@ export default function ProductTable({ rows, categories }: ProductTableProps) {
                     </td>
                     <td className="px-4 py-4">
                       {row.isActive ? (
-                        <span className="inline-flex rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-emerald-700">
+                        <span className="inline-flex rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold tracking-wide text-emerald-700">
                           Activo
                         </span>
                       ) : (
-                        <span className="inline-flex rounded-full bg-stone-100 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-stone-500">
+                        <span className="inline-flex rounded-full bg-stone-100 px-2.5 py-1 text-[11px] font-semibold tracking-wide text-stone-500">
                           Inactivo
                         </span>
                       )}

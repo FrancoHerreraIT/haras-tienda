@@ -44,7 +44,7 @@ export default async function PedidosPage() {
   return (
     <div className="mx-auto max-w-6xl">
       <header className="border-b border-stone-200 pb-6">
-        <span className="text-[10px] font-semibold uppercase tracking-[0.32em] text-[#8B5A2B]">
+        <span className="text-[10px] font-semibold tracking-wide text-[#8B5A2B]">
           Backoffice
         </span>
         <h1 className={`${headingClass} mt-2 text-2xl sm:text-3xl`}>Pedidos</h1>
@@ -60,7 +60,7 @@ export default async function PedidosPage() {
             key={key}
             className="rounded-xl border border-stone-200 bg-white px-4 py-3"
           >
-            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-stone-400">
+            <p className="text-[10px] font-semibold tracking-wide text-stone-400">
               {meta.label}
             </p>
             <p className="mt-1 font-[family-name:var(--font-display)] text-xl text-stone-900 sm:text-2xl">
