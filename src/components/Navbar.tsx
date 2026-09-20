@@ -48,18 +48,13 @@ const claseLink = (activo: boolean) =>
       : "border-transparent hover:border-stone-300 hover:text-amber-800"
   }`;
 
-/* "Productos" es la entrada principal al catalogo. En el telefono va en
-   semibold y color cuero con el subrayado siempre puesto: la fila scrollea y
-   entra cortada, asi que el renglon que importa tiene que destacarse del resto
-   en vez de leerse como uno mas de los cinco. En md+ se apaga y vuelve a
-   comportarse como cualquier renglon: ahi la barra entera esta a la vista y no
-   hace falta senalar por donde entrar. */
-const claseProductos = (abierto: boolean) =>
-  `inline-flex min-h-[40px] shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-[#8B5A2B] py-2.5 font-semibold text-[#8B5A2B] transition-colors md:min-h-0 md:font-normal ${
-    abierto
-      ? "md:border-[#8B5A2B] md:text-amber-800"
-      : "md:border-transparent md:text-stone-700 md:hover:border-stone-300 md:hover:text-amber-800"
-  }`;
+/* "Productos" es un renglon como los demas, con el chevron al lado.
+   En el telefono llevaba el subrayado cuero puesto a mano para destacarse en
+   una fila que entraba cortada; ahora la fila entra entera y ese pintado fijo
+   quedaba leyendose como "estas en el catalogo" desde cualquier otra pagina.
+   Se enciende con el mismo criterio que el resto: parado en /productos, o con
+   el panel de rubros abierto. */
+const claseProductos = (activo: boolean) => `${claseLink(activo)} gap-1.5`;
 
 type NavbarProps = {
   /** Rubros con productos activos, para la barra que abre "Productos". */
@@ -71,6 +66,11 @@ export default function Navbar({ categories }: NavbarProps) {
      Suspense, a diferencia de useSearchParams (que usa SearchBox). */
   const pathname = usePathname();
   const enInicio = pathname === "/";
+  /* Comparacion estricta y no startsWith/includes: /producto/[id] (el detalle,
+     en singular) y cualquier otra ruta que empiece igual no son el catalogo.
+     El filtro por rubro viaja en la query, asi que /productos?categoria=... si
+     cuenta como estar parado aca. */
+  const enCatalogo = pathname === RUTA_CATALOGO;
 
   const openCart = useCartStore((state) => state.openCart);
   const totalItems = useCartStore((state) => state.getTotalItems());
@@ -216,20 +216,22 @@ export default function Navbar({ categories }: NavbarProps) {
       </div>
 
       {/* Barra secundaria: crema.
-          En mobile scrollea desde la izquierda (con justify-center los primeros
-          items quedarian fuera de alcance); en md+ ya entra centrada. */}
+          En mobile los cinco renglones se reparten de borde a borde; en md+ el
+          grupo va centrado. */}
       <div
         ref={barraRef}
         className="relative bg-[#F7F5F0] border-b border-stone-200 shadow-sm shadow-stone-200/50"
       >
-        {/* El scroll horizontal es solo del telefono: en md+ tiene que quedar
-            visible o recortaria el menu que cuelga de "Productos". */}
-        <nav className="w-full px-4 md:px-12 lg:px-24 xl:px-32 py-3 flex items-center justify-start md:justify-center gap-4 sm:gap-6 md:gap-12 text-[13px] sm:text-[14px] tracking-wide text-stone-700 overflow-x-auto md:overflow-x-visible no-scrollbar">
-          {/* "Inicio" abre la fila en las dos pantallas. En el telefono la
-              fila es angosta y scrollea, asi que se come el primer lugar y
-              "Productos" arranca corrido; se acepta a proposito, porque tener
-              la vuelta a la home visible pesa mas que ganar ese ancho (el logo
-              tambien lleva a la home, pero no todos lo prueban). */}
+        {/* justify-between reparte los cinco renglones en todo el ancho del
+            telefono: el gap-2 pasa a ser la separacion minima entre dos, no la
+            real. El overflow-x-auto queda de red — en una pantalla tan angosta
+            que los cinco no entren, justify-between se comporta como
+            flex-start y la fila vuelve a scrollear en vez de recortarse. Ese
+            scroll es solo del telefono: en md+ tiene que quedar visible o
+            recortaria el menu que cuelga de "Productos". */}
+        <nav className="w-full px-4 md:px-12 lg:px-24 xl:px-32 py-3 flex items-center justify-between gap-2 sm:gap-4 md:justify-center md:gap-12 text-[13px] sm:text-[14px] tracking-wide text-stone-700 overflow-x-auto md:overflow-x-visible no-scrollbar">
+          {/* "Inicio" abre la fila en las dos pantallas: el logo tambien
+              lleva a la home, pero no todos lo prueban. */}
           <Link
             href={INICIO.href}
             aria-current={enInicio ? "page" : undefined}
@@ -245,7 +247,8 @@ export default function Navbar({ categories }: NavbarProps) {
                 onClick={() => setCategoriasAbiertas((abierto) => !abierto)}
                 aria-expanded={categoriasAbiertas}
                 aria-controls={`${categoriasId}-escritorio ${categoriasId}-movil`}
-                className={claseProductos(categoriasAbiertas)}
+                aria-current={enCatalogo ? "page" : undefined}
+                className={claseProductos(enCatalogo || categoriasAbiertas)}
               >
                 Productos
                 <ChevronDown
@@ -280,7 +283,11 @@ export default function Navbar({ categories }: NavbarProps) {
           ) : (
             /* Sin rubros cargados no hay panel que abrir: mismo aspecto, pero
                entra derecho al catalogo sin filtro. */
-            <Link href={RUTA_CATALOGO} className={claseProductos(false)}>
+            <Link
+              href={RUTA_CATALOGO}
+              aria-current={enCatalogo ? "page" : undefined}
+              className={claseProductos(enCatalogo)}
+            >
               Productos
             </Link>
           )}

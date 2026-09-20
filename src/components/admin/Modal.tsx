@@ -87,8 +87,14 @@ export default function Modal({
   if (!open) return null;
 
   return (
+    /* El aire de los cuatro bordes lo pone el fondo, no un margen del panel:
+       con `items-center` un `mb` lo descentraria hacia arriba, mientras que
+       el padding achica la caja donde se centra y el panel queda parejo.
+       Abajo se le suma el area segura para el panel sin pie (el que la lleva
+       en su propio padding). El backdrop es `absolute inset-0`: resuelve
+       contra el padding box, asi que sigue tapando la pantalla entera. */
     <div
-      className={`fixed inset-0 flex items-center justify-center p-4 ${
+      className={`fixed inset-0 flex items-center justify-center p-4 pb-[calc(1.5rem_+_env(safe-area-inset-bottom,0px))] sm:p-6 ${
         layer === "top" ? "z-[60]" : "z-50"
       }`}
       role="dialog"
@@ -103,13 +109,19 @@ export default function Modal({
         className="absolute inset-0 cursor-default bg-[#1C1A19]/70 backdrop-blur-sm"
       />
 
-      {/* dvh y no vh: en mobile la barra del navegador cambia de alto y con
-          vh el pie del formulario quedaba fuera de pantalla. El alto del
-          cuerpo lo resuelve flex (min-h-0), no un max-h fijo. */}
+      {/* svh y no vh ni dvh: en el telefono la barra del navegador cambia de
+          alto, y el que manda el centrado es el `inset-0` de afuera, que mide
+          el viewport grande (barra escondida). Con vh/dvh el panel se
+          dimensionaba contra un alto que en ese momento no estaba disponible y
+          el pie del formulario terminaba abajo del borde. svh es el viewport
+          chico — el que hay con la barra a la vista —, asi que el 85% entra
+          siempre, en la resolucion mas apretada tambien. El reparto interno lo
+          sigue resolviendo flex: encabezado y pie fijos (shrink-0), el cuerpo
+          scrollea (min-h-0 + flex-1 + overflow-y-auto). */}
       <div
         ref={panelRef}
         tabIndex={-1}
-        className={`relative flex max-h-[90dvh] w-full ${sizes[size]} flex-col overflow-hidden rounded-2xl border-t-4 border-[#8B5A2B] bg-[#F7F5F0] shadow-2xl shadow-black/40 focus:outline-none`}
+        className={`relative flex max-h-[85svh] w-full ${sizes[size]} flex-col overflow-hidden rounded-2xl border-t-4 border-[#8B5A2B] bg-[#F7F5F0] shadow-2xl shadow-black/40 focus:outline-none`}
       >
         <header className="flex shrink-0 items-start justify-between gap-3 px-5 pt-5 pb-4 sm:px-8 sm:pt-7 sm:pb-5">
           <div className="min-w-0">
@@ -132,8 +144,16 @@ export default function Modal({
           {children}
         </div>
 
+        {/* El padding inferior SUMA el area segura en vez de reemplazarla,
+            igual que el pie del CartDrawer. `pb-safe` es una @utility que
+            declara `padding-bottom: env(safe-area-inset-bottom, 0px)` y por
+            orden de cascada pisaba el 1rem del `py-4`: en cuanto el inset da
+            0 — Android sin barra gestual, o iOS cuando la barra del navegador
+            ya ocupa ese lugar — el pie se quedaba sin padding abajo y
+            "Volver", que en mobile es el ultimo por el flex-col-reverse,
+            terminaba pegado al canto del panel. */}
         {footer && (
-          <footer className="flex shrink-0 flex-col-reverse gap-3 border-t border-stone-200 bg-stone-100/60 px-5 py-4 pb-safe sm:flex-row sm:justify-end sm:px-8 sm:py-5">
+          <footer className="flex shrink-0 flex-col-reverse gap-3 border-t border-stone-200 bg-stone-100/60 px-5 pt-4 pb-[calc(2rem_+_env(safe-area-inset-bottom,0px))] sm:flex-row sm:justify-end sm:px-8 sm:pt-5 sm:pb-[calc(1.25rem_+_env(safe-area-inset-bottom,0px))]">
             {footer}
           </footer>
         )}

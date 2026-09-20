@@ -771,7 +771,10 @@ export default function CheckoutPage() {
                   <ul className="space-y-5 max-h-[340px] overflow-y-auto pr-1">
                     {items.map((item) => (
                       <li key={item.id} className="flex gap-4">
-                        <div className="relative w-16 h-16 overflow-hidden rounded-lg bg-[#F7F5F0] border border-stone-100 flex items-center justify-center shrink-0">
+                        {/* La cantidad va una sola vez, en el renglon de
+                            abajo ("... c/u · x N"). El `relative` se queda:
+                            lo necesita el `fill` de next/image. */}
+                        <div className="relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-stone-100 bg-[#F7F5F0]">
                           {item.imageUrl ? (
                             <Image
                               src={item.imageUrl}
@@ -786,16 +789,18 @@ export default function CheckoutPage() {
                               strokeWidth={1}
                             />
                           )}
-                          <span className="absolute -top-2 -right-2 flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-[#8B5A2B] text-[11px] font-bold text-white leading-none">
-                            {item.quantity}
-                          </span>
                         </div>
 
                         <div className="flex-1 min-w-0">
-                          <span className="text-[10px] text-amber-800/80 font-semibold tracking-wide">
-                            {item.categoryName}
-                          </span>
-                          <h3 className="text-sm text-stone-800 leading-snug line-clamp-2 mt-0.5">
+                          {/* Sin el rubro arriba: el que llego al checkout ya
+                              eligio, y en esta lista solo necesita reconocer
+                              lo que compra.
+                              El tamano va en px y no en `text-sm`, que con el
+                              rem al 67% de globals.css cae a ~9px — menos que
+                              los 10px literales que tenia el rubro, que con el
+                              semibold en cuero encima terminaba leyendose como
+                              el titulo del item. */}
+                          <h3 className="text-[13px] font-semibold text-stone-900 leading-snug line-clamp-2">
                             {item.title}
                           </h3>
                           {/* Precio unitario x cantidad: sin esto el importe

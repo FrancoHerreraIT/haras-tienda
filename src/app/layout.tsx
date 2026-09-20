@@ -28,6 +28,20 @@ export const metadata: Metadata = {
   title: "Haras del Este | Campo, Cocina y Hogar",
   description:
     "Tienda online de Haras del Este: tablas de asado, cuchillería artesanal y artículos de campo. Retirás tu pedido en cualquiera de nuestras dos sucursales.",
+
+  /* Sale como <meta name="format-detection" content="telephone=no, ...">.
+     Safari en iOS detecta solo los numeros que parecen telefono y los
+     convierte en un link tel: azul y subrayado, con su propia tipografia: en
+     /contacto pisaba el numero de WhatsApp y abria el telefono en vez del
+     chat, que es el canal real. Va en el layout raiz y no en la page porque
+     el mismo numero aparece en los mails y en el panel de transferencia, y
+     ademas iOS tambien marca direcciones (las sucursales del retiro).
+     Las pages de abajo no lo declaran, asi que heredan este. */
+  formatDetection: {
+    telephone: false,
+    address: false,
+    email: false,
+  },
 };
 
 /* viewportFit: cover deja que el contenido use el area del notch; el padding
