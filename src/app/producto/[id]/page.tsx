@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ChevronRight, Package, Shield, Truck } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -15,6 +15,7 @@ import {
   portada,
 } from "@/app/lib/storeData";
 import { hrefCategoria } from "@/app/lib/search";
+import { DESCUENTO_TRANSFERENCIA } from "@/app/lib/paymentConfig";
 
 /* La ficha sale de la base en cada visita, igual que el listado. */
 export const dynamic = "force-dynamic";
@@ -35,7 +36,7 @@ export async function generateMetadata({
     title: `${product.title} | Haras del Este`,
     description:
       product.description ??
-      `${product.title} en Haras del Este. Envios a todo el pais.`,
+      `${product.title} en Haras del Este. Retiralo en cualquiera de nuestras dos sucursales.`,
     openGraph: {
       title: product.title,
       description: product.description ?? undefined,
@@ -100,6 +101,11 @@ export default async function ProductoPage({
             <p className="mt-5 font-[family-name:var(--font-display)] text-3xl text-stone-900 md:text-4xl">
               $ {product.price.toLocaleString("es-AR")}
             </p>
+            {/* Tamaño en px y no `text-sm`: el :root esta al 67%
+                (globals.css) y las clases en rem salen diminutas. */}
+            <p className="mt-1 text-[13px] font-medium text-green-700">
+              {DESCUENTO_TRANSFERENCIA}% OFF con transferencia
+            </p>
 
             {/* Estado de stock, con el mismo criterio que el listado */}
             <p className="mt-2 text-sm">
@@ -158,21 +164,6 @@ export default async function ProductoPage({
                 </div>
               </dl>
             </section>
-
-            <ul className="mt-8 grid gap-3 border-t border-stone-200 pt-7 text-sm text-stone-600 sm:grid-cols-3">
-              <li className="flex items-center gap-2">
-                <Truck className="h-4 w-4 shrink-0 text-amber-800" />
-                Envios a todo el pais
-              </li>
-              <li className="flex items-center gap-2">
-                <Shield className="h-4 w-4 shrink-0 text-amber-800" />
-                Compra protegida
-              </li>
-              <li className="flex items-center gap-2">
-                <Package className="h-4 w-4 shrink-0 text-amber-800" />
-                Embalaje reforzado
-              </li>
-            </ul>
           </div>
         </div>
 

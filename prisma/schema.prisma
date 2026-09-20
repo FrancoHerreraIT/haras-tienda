@@ -33,7 +33,18 @@ model Product {
   /// listado, el carrito y el checkout. El resto son la galeria del detalle.
   images         String[]
   isActive       Boolean         @default(true) 
-  
+  /// Lo eligio el dueno desde el panel: sube a la cabeza de la grilla.
+  isFeatured     Boolean         @default(false)
+  /// Cuando lo tildaron como destacado; null si no lo esta.
+  ///
+  /// Va aparte de createdAt porque ordenan cosas distintas: destacar hoy un
+  /// producto cargado el ano pasado tiene que mandarlo al frente, y por
+  /// createdAt quedaria ultimo entre los destacados.
+  featuredAt     DateTime?
+
+  /// Cuando se dio de alta el producto.
+  createdAt      DateTime        @default(now())
+
   categoryId     String
   category       Category        @relation(fields: [categoryId], references: [id])
   
@@ -43,12 +54,44 @@ model Product {
 
 model Order {
   id              String           @id @default(uuid())
+  /// Datos de facturacion (el comprador). customerName es "Nombre y
+  /// Apellido" o la razon social, tal como tiene que salir en la factura.
   customerName    String
   customerEmail   String
   customerPhone   String
-  status          String           @default("pending") 
+
+  /// DNI o CUIT del comprador, solo digitos: 7-8 es DNI, 11 es CUIT.
+  ///
+  /// Opcionales en la base por los pedidos anteriores a estas columnas; el
+  /// checkout los exige y el servidor los revalida (lib/checkout.ts).
+  customerTaxId        String?
+  /// Condicion frente al IVA: una clave de TAX_CONDITIONS (lib/checkout.ts).
+  customerTaxCondition String?
+
+  /// Quien pasa a buscar el pedido por la sucursal. Puede no ser el
+  /// comprador (una empresa que manda a un empleado, un regalo): por eso va
+  /// aparte de los datos de facturacion.
+  pickupFirstName String?
+  pickupLastName  String?
+  pickupDni       String?
+
+  status          String           @default("pending")
   totalAmount     Decimal          @db.Decimal(10, 2)
   mpPreferenceId  String?          @unique
+
+  /// Sucursal donde el cliente retira el pedido. No se hacen envios a
+  /// domicilio: por eso el Order no tiene direccion.
+  ///
+  /// Guarda el id de PICKUP_BRANCHES (src/app/lib/branches.ts), no el nombre
+  /// visible: renombrar "Homa Mall" en la vidriera no tiene que reescribir
+  /// los pedidos viejos.
+  ///
+  /// Opcional en la base por los pedidos anteriores a esta columna; el
+  /// checkout lo exige y el servidor lo vuelve a validar.
+  pickupBranch    String?
+
+  /// Como eligio pagar: "mercadopago" o "transferencia" (PaymentMethod).
+  paymentMethod   String           @default("mercadopago")
   
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt 

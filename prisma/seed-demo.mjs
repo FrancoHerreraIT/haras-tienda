@@ -46,13 +46,13 @@ const orders = [
     ],
   },
   {
-    customerName: "Lucia Fernandez", phone: "+54 9 261 733-1180", status: "shipped",
+    customerName: "Lucia Fernandez", phone: "+54 9 261 733-1180", status: "ready_for_pickup",
     daysAgo: 6, mp: "demo-mp-pref-0003",
     items: [["Mate de Algarrobo con Virola", 2], ["Tabla Redonda Eucalipto 35cm", 1]],
     logs: [
       ["pending", "Pedido generado desde el checkout."],
       ["paid", "Pago acreditado por Mercado Pago."],
-      ["shipped", "Despachado por Andreani. Seguimiento 7799112345."],
+      ["ready_for_pickup", "Preparado en la sucursal, esperando al cliente."],
     ],
   },
   {
@@ -62,8 +62,8 @@ const orders = [
     logs: [
       ["pending", "Pedido generado desde el checkout."],
       ["paid", "Pago acreditado por Mercado Pago."],
-      ["shipped", "Despachado por Correo Argentino."],
-      ["delivered", "Entregado y firmado por el cliente."],
+      ["ready_for_pickup", "Preparado en la sucursal, esperando al cliente."],
+      ["delivered", "Retirado en la sucursal por el cliente."],
     ],
   },
   {

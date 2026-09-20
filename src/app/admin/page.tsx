@@ -3,9 +3,10 @@ import { DollarSign, Package, ShoppingBag, Tags } from "lucide-react";
 import { auth } from "@/auth";
 import { prisma } from "@/app/lib/prisma";
 import { formatARS } from "@/components/admin/ui";
+import { ESTADOS_COBRADOS } from "@/components/admin/orderStatus";
 
 /** Estados en los que un pedido cuenta como venta concretada. */
-const ESTADOS_VENDIDOS = ["paid", "shipped", "delivered"];
+const ESTADOS_VENDIDOS = [...ESTADOS_COBRADOS];
 
 async function getStats() {
   const inicioDeMes = new Date();
@@ -64,7 +65,7 @@ export default async function AdminDashboardPage() {
     {
       label: "Pedidos Pendientes",
       value: String(stats.pendientes),
-      hint: "Esperando envio",
+      hint: "Esperando el pago",
       icon: ShoppingBag,
     },
     {

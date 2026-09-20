@@ -22,6 +22,7 @@ type ParsedProduct = {
   images: string[];
   categoryId: string;
   isActive: boolean;
+  isFeatured: boolean;
 };
 
 /** Valida el formulario y devuelve, o los datos limpios, o el motivo del rechazo. */
@@ -67,7 +68,10 @@ function parseProduct(
       stock,
       images,
       categoryId,
+      /* Un checkbox que no se tilda no viaja en el FormData: la ausencia es
+         el "false". Por eso se compara contra "on" y no se lee un booleano. */
       isActive: formData.get("isActive") === "on",
+      isFeatured: formData.get("isFeatured") === "on",
     },
   };
 }
@@ -95,7 +99,13 @@ export async function createProduct(formData: FormData): Promise<ActionResult> {
   });
   if (!category) return { error: "La categoria elegida ya no existe." };
 
-  await prisma.product.create({ data: parsed.data });
+  await prisma.product.create({
+    data: {
+      ...parsed.data,
+      /* Nace destacado o no destacado: si lo esta, se sella ahora. */
+      featuredAt: parsed.data.isFeatured ? new Date() : null,
+    },
+  });
 
   revalidateProducts();
   return {};
@@ -113,7 +123,18 @@ export async function updateProduct(
   const existing = await prisma.product.findUnique({ where: { id } });
   if (!existing) return { error: "El producto ya no existe." };
 
-  await prisma.product.update({ where: { id }, data: parsed.data });
+  /* El sello solo se pone cuando el producto pasa a destacado, y se conserva
+     mientras siga tildado: si se re-sellara en cada guardado, corregirle una
+     falta de ortografia a un destacado viejo lo saltearia al frente de la
+     grilla sin que nadie lo haya vuelto a elegir. Destildarlo lo borra. */
+  const featuredAt = parsed.data.isFeatured
+    ? (existing.featuredAt ?? new Date())
+    : null;
+
+  await prisma.product.update({
+    where: { id },
+    data: { ...parsed.data, featuredAt },
+  });
 
   revalidateProducts();
   return {};

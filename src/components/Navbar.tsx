@@ -20,8 +20,8 @@ const greatVibes = Great_Vibes({
   display: "swap",
 });
 
-/* "Inicio" va aparte de la lista: en el telefono se esconde (el logo ya lleva
-   a la home) y ahi el lugar destacado se lo queda "Productos". */
+/* "Inicio" va aparte de la lista porque abre la fila en las dos pantallas y
+   no comparte el `listo` de los demas: la home siempre existe. */
 const INICIO = { label: "Inicio", href: "/" };
 
 /* "Productos" tampoco esta aca: es el boton que despliega las categorias, y va
@@ -32,32 +32,28 @@ const INICIO = { label: "Inicio", href: "/" };
    link se enciende solo. */
 const linksRestantes = [
   { label: "Combos", href: "/combos", listo: false },
-  { label: "Armá tu Kit", href: "/arma-tu-kit", listo: false },
   { label: "Nosotros", href: "/nosotros", listo: false },
-  { label: "Contacto", href: "/contacto", listo: false },
+  { label: "Contacto", href: "/contacto", listo: true },
 ];
 
-/* Renglon comun de la barra. No lleva `display`: lo pone cada llamada, porque
-   "Inicio" necesita `hidden md:inline-flex` y dos utilidades de display sin
-   prefijo en el mismo elemento se resuelven por el orden en que Tailwind emite
-   el CSS, no por el orden del string.
-   El borde inferior va siempre, transparente cuando
+/* Renglon comun de la barra. El borde inferior va siempre, transparente cuando
    no es la pagina actual: si apareciera recien al activarse, el renglon se
    correria hacia arriba (mismo criterio que CategoryMenu).
    El minimo tactil va en px y no en rem — es una medida del dedo, no del
    texto, y no tiene que encoger con la escala del 67% de globals.css. */
 const claseLink = (activo: boolean) =>
-  `min-h-[40px] shrink-0 items-center whitespace-nowrap border-b-2 py-2.5 transition-colors md:min-h-0 ${
+  `inline-flex min-h-[40px] shrink-0 items-center whitespace-nowrap border-b-2 py-2.5 transition-colors md:min-h-0 ${
     activo
       ? "border-[#8B5A2B] font-semibold text-amber-800"
       : "border-transparent hover:border-stone-300 hover:text-amber-800"
   }`;
 
-/* "Productos" es la entrada principal al catalogo. En el telefono, donde
-   "Inicio" no esta, va en semibold y color cuero con el subrayado siempre
-   puesto, para que se lea como la cabecera de la fila y no como uno mas de los
-   cinco. En md+ se apaga y vuelve a comportarse como cualquier renglon: ahi la
-   barra entera esta a la vista y no hace falta senalar por donde entrar. */
+/* "Productos" es la entrada principal al catalogo. En el telefono va en
+   semibold y color cuero con el subrayado siempre puesto: la fila scrollea y
+   entra cortada, asi que el renglon que importa tiene que destacarse del resto
+   en vez de leerse como uno mas de los cinco. En md+ se apaga y vuelve a
+   comportarse como cualquier renglon: ahi la barra entera esta a la vista y no
+   hace falta senalar por donde entrar. */
 const claseProductos = (abierto: boolean) =>
   `inline-flex min-h-[40px] shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-[#8B5A2B] py-2.5 font-semibold text-[#8B5A2B] transition-colors md:min-h-0 md:font-normal ${
     abierto
@@ -130,24 +126,33 @@ export default function Navbar({ categories }: NavbarProps) {
     <header className="sticky top-0 z-40">
       {/* Franja superior: negro forja */}
       <div className="bg-[#1C1A19] text-stone-100 border-b border-white/5">
-        <div className="w-full px-4 md:px-12 lg:px-24 xl:px-32 py-3 md:py-4 flex items-center justify-between gap-3 md:gap-6">
-          {/* Logo — firma de estancia */}
-          <Link href="/" className="min-w-0 shrink leading-none group">
+        <div className="w-full px-4 md:px-12 lg:px-24 xl:px-32 py-3.5 md:py-5 flex items-center justify-between gap-3 md:gap-6">
+          {/* Logo — firma de estancia.
+              La bajada va centrada bajo la firma: la H de Great Vibes abre con
+              un rulo hacia la izquierda, y alineadas las dos a la izquierda la
+              bajada se veia corrida.
+              Sin truncate: su overflow hidden cortaba los trazos de la cursiva
+              que salen de la caja, como el remate de la ultima "e". El px-1
+              les deja lugar a esos trazos. */}
+          <Link
+            href="/"
+            className="group flex shrink-0 flex-col items-center leading-none"
+          >
             <span
-              className={`${greatVibes.className} block truncate text-2xl sm:text-3xl md:text-4xl text-stone-50 group-hover:text-amber-100 transition-colors leading-[1.15]`}
+              className={`${greatVibes.className} block whitespace-nowrap px-1 text-[1.75rem] sm:text-[2.125rem] md:text-[2.75rem] text-stone-50 group-hover:text-amber-100 transition-colors leading-[1.15]`}
             >
               Haras del Este
             </span>
-            <span className="block truncate text-[8px] sm:text-[9px] md:text-[10px] tracking-wide text-amber-700/90 mt-1 pl-0.5">
+            <span className="mt-1 block whitespace-nowrap text-[8px] sm:text-[9px] md:text-[11px] tracking-wide text-amber-700/90">
               Cocina · Campo · Hogar
             </span>
           </Link>
 
           {/* Buscador central (desktop) */}
-          <div className="hidden md:flex flex-1 max-w-3xl">
+          <div className="hidden md:flex flex-1 max-w-4xl">
             {/* SearchBox lee la consulta de la URL: el Suspense es lo que
                 pide Next para useSearchParams. */}
-            <Suspense fallback={<div className="h-[42px] w-full" />}>
+            <Suspense fallback={<div className="h-12 w-full" />}>
               <SearchBox
                 className="w-full"
                 placeholder="Buscar tablas, cuchillos, sets de campo..."
@@ -184,9 +189,9 @@ export default function Navbar({ categories }: NavbarProps) {
                   ? `Abrir carrito, ${totalItems} producto(s)`
                   : "Abrir carrito"
               }
-              className="relative flex h-11 w-11 items-center justify-center text-stone-100 hover:text-amber-600 transition-colors"
+              className="relative flex h-11 w-11 md:h-12 md:w-12 items-center justify-center text-stone-100 hover:text-amber-600 transition-colors"
             >
-              <ShoppingCart className="w-6 h-6" />
+              <ShoppingCart className="w-6 h-6 md:w-7 md:h-7" />
               {mounted && totalItems > 0 && (
                 <span className="absolute top-1 right-1 flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-[#8B5A2B] text-[11px] font-bold leading-none text-white">
                   {totalItems}
@@ -199,7 +204,7 @@ export default function Navbar({ categories }: NavbarProps) {
         {/* Fila de busqueda desplegable (solo mobile) */}
         {searchOpen && (
           <div id={`${searchId}-mobile-row`} className="md:hidden px-4 pb-3">
-            <Suspense fallback={<div className="h-[42px] w-full" />}>
+            <Suspense fallback={<div className="h-12 w-full" />}>
               <SearchBox
                 autoFocus
                 placeholder="Buscar tablas, cuchillos..."
@@ -220,13 +225,15 @@ export default function Navbar({ categories }: NavbarProps) {
         {/* El scroll horizontal es solo del telefono: en md+ tiene que quedar
             visible o recortaria el menu que cuelga de "Productos". */}
         <nav className="w-full px-4 md:px-12 lg:px-24 xl:px-32 py-3 flex items-center justify-start md:justify-center gap-4 sm:gap-6 md:gap-12 text-[13px] sm:text-[14px] tracking-wide text-stone-700 overflow-x-auto md:overflow-x-visible no-scrollbar">
-          {/* "Inicio" solo en escritorio. En el telefono la fila es angosta y
-              scrollea: gastar el primer lugar en un link que el logo ya cubre
-              empujaria "Productos" fuera de la vista. */}
+          {/* "Inicio" abre la fila en las dos pantallas. En el telefono la
+              fila es angosta y scrollea, asi que se come el primer lugar y
+              "Productos" arranca corrido; se acepta a proposito, porque tener
+              la vuelta a la home visible pesa mas que ganar ese ancho (el logo
+              tambien lleva a la home, pero no todos lo prueban). */}
           <Link
             href={INICIO.href}
             aria-current={enInicio ? "page" : undefined}
-            className={`hidden md:inline-flex ${claseLink(enInicio)}`}
+            className={claseLink(enInicio)}
           >
             {INICIO.label}
           </Link>
@@ -286,7 +293,7 @@ export default function Navbar({ categories }: NavbarProps) {
                 <span
                   key={link.href}
                   aria-disabled="true"
-                  className={`inline-flex cursor-default ${claseLink(false)}`}
+                  className={`cursor-default ${claseLink(false)}`}
                 >
                   {link.label}
                 </span>
@@ -299,7 +306,7 @@ export default function Navbar({ categories }: NavbarProps) {
                 key={link.href}
                 href={link.href}
                 aria-current={activo ? "page" : undefined}
-                className={`inline-flex ${claseLink(activo)}`}
+                className={claseLink(activo)}
               >
                 {link.label}
               </Link>

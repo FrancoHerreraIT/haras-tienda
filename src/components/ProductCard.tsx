@@ -3,8 +3,15 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, Package, ShoppingCart } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Package,
+  ShoppingCart,
+  Star,
+} from "lucide-react";
 import { useCartStore } from "@/store/useCartStore";
+import { DESCUENTO_TRANSFERENCIA } from "@/app/lib/paymentConfig";
 import { portada, type StoreProduct } from "@/app/lib/storeData";
 
 interface ProductCardProps {
@@ -80,6 +87,20 @@ export default function ProductCard({ product }: ProductCardProps) {
           </span>
         )}
 
+        {/* Los destacados comparten grilla con el resto del catalogo: sin esto
+            el visitante ve un orden distinto al alfabetico y no hay nada que
+            explique por que. Va a la derecha porque las etiquetas de stock ya
+            ocupan la esquina izquierda. */}
+        {product.isFeatured && (
+          <span
+            title="Producto destacado"
+            className="absolute top-2 right-2 z-20 flex items-center gap-1 rounded-full bg-[#8B5A2B] px-2.5 py-1 text-[10px] font-semibold tracking-wide text-[#F7F5F0]"
+          >
+            <Star className="h-3 w-3 fill-current" aria-hidden="true" />
+            Destacado
+          </span>
+        )}
+
         {/* Galeria en la vidriera: pasar las fotos sin entrar a la ficha */}
         {tieneGaleria && (
           <>
@@ -141,8 +162,13 @@ export default function ProductCard({ product }: ProductCardProps) {
         </h3>
 
         <div className="mt-auto">
-          <p className="font-[family-name:var(--font-display)] text-[20px] sm:text-[24px] text-stone-900 mb-4 sm:mb-5">
+          <p className="font-[family-name:var(--font-display)] text-[20px] sm:text-[24px] text-stone-900">
             $ {product.price.toLocaleString("es-AR")}
+          </p>
+          {/* Tamaño en px y no `text-sm`: el :root esta al 67% (globals.css)
+              y las clases en rem salen diminutas. */}
+          <p className="mt-1 mb-4 text-[12px] font-medium text-green-700 sm:mb-5">
+            {DESCUENTO_TRANSFERENCIA}% OFF con transferencia
           </p>
 
           <button

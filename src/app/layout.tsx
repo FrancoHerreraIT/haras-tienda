@@ -27,7 +27,7 @@ const sourceSans = Source_Sans_3({
 export const metadata: Metadata = {
   title: "Haras del Este | Campo, Cocina y Hogar",
   description:
-    "Tienda online de Haras del Este: tablas de asado, cuchillería artesanal y kits de campo con envíos a todo el país.",
+    "Tienda online de Haras del Este: tablas de asado, cuchillería artesanal y artículos de campo. Retirás tu pedido en cualquiera de nuestras dos sucursales.",
 };
 
 /* viewportFit: cover deja que el contenido use el area del notch; el padding

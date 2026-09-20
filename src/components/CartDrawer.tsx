@@ -162,9 +162,11 @@ export default function CartDrawer() {
           )}
         </div>
 
-        {/* Footer */}
+        {/* Footer. El padding inferior suma el area segura en vez de
+            reemplazarlo: con pb-safe solo, en telefonos sin barra gestual
+            quedaba en 0 y el boton pegado al borde. */}
         {items.length > 0 && (
-          <div className="shrink-0 border-t border-stone-200 px-4 sm:px-6 py-4 sm:py-5 pb-safe space-y-4">
+          <div className="shrink-0 border-t border-stone-200 px-4 sm:px-6 pt-4 sm:pt-5 pb-[calc(2rem_+_env(safe-area-inset-bottom,0px))] sm:pb-[calc(1.25rem_+_env(safe-area-inset-bottom,0px))] space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-sm text-stone-500">Total</span>
               <span className="font-[family-name:var(--font-display)] text-2xl text-stone-900">

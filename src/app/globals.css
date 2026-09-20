@@ -37,10 +37,15 @@ body {
    prefijo son las del telefono y los breakpoints agrandan, nunca al reves.
    --------------------------------------------------------------------------- */
 
-/* Ningun elemento debe poder generar scroll horizontal en la pagina. */
+/* Ningun elemento debe poder generar scroll horizontal en la pagina.
+   `clip` y no `hidden`: con hidden el body pasa a ser un contenedor de scroll
+   propio (que nunca scrollea, porque crece con el contenido), y los elementos
+   `sticky` se pegan a el en vez de a la ventana. Asi el Navbar se quedaba
+   arriba de la pagina en lugar de acompanar al deslizar. clip recorta igual
+   sin crear ese contenedor. */
 html,
 body {
-  overflow-x: hidden;
+  overflow-x: clip;
   max-width: 100%;
 }
 

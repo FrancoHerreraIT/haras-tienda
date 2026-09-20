@@ -4,6 +4,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
+import { DESCUENTO_TRANSFERENCIA } from "@/app/lib/paymentConfig";
+
 interface Slide {
   id: number;
   eyebrow: string;
@@ -28,22 +30,13 @@ const slides: Slide[] = [
   },
   {
     id: 2,
-    eyebrow: "Edición limitada",
-    title: "Cuchillería forjada a mano",
-    subtitle:
-      "Acero al carbono trabajado por artesanos. Estuche de cuero de regalo en cada compra.",
-    cta: "Descubrir cuchillería",
+    eyebrow: "Aprovechá el beneficio",
+    /* Interpolado y no escrito a mano: si cambia el porcentaje, el hero no
+       puede quedar prometiendo otro numero que el que cobra el checkout. */
+    title: `${DESCUENTO_TRANSFERENCIA}% de descuento`,
+    subtitle: "Abonando tu compra con transferencia bancaria.",
+    cta: "Ver catálogo",
     image: "/hero/haras2.jpg",
-    position: "object-center",
-  },
-  {
-    id: 3,
-    eyebrow: "Envíos a todo el país",
-    title: "Armá tu kit de campo",
-    subtitle:
-      "Combos pensados para el asador exigente. Envío sin cargo en compras desde $80.000.",
-    cta: "Armar mi kit",
-    image: "/hero/haras3.jpg",
     position: "object-center",
   },
 ];
@@ -117,7 +110,7 @@ export default function HeroCarousel() {
         onMouseLeave={() => setPaused(false)}
       >
         {/* Capas de imagen (crossfade). Decorativas: el texto del slide ya
-            dice lo mismo y anunciar tres fotos apiladas solo estorba. */}
+            dice lo mismo y anunciar las fotos apiladas solo estorba. */}
         {slides.map((s, index) => (
           <div
             key={s.id}
@@ -146,7 +139,7 @@ export default function HeroCarousel() {
         <div className="absolute inset-0 bg-gradient-to-t from-[#1C1A19]/80 via-transparent to-transparent md:from-[#1C1A19]/70" />
 
         {/* Contenido */}
-        <div className="relative z-10 flex flex-col justify-center w-full px-5 sm:px-8 md:px-16 lg:px-20 py-12 sm:py-16 md:py-24">
+        <div className="relative z-10 flex flex-col justify-center w-full px-5 sm:px-8 md:px-16 lg:px-20 pt-12 pb-16 sm:py-16 md:py-24">
           <div className="max-w-2xl">
             <span className="inline-block text-[10px] sm:text-[11px] md:text-xs tracking-wide text-amber-500/90 mb-3 sm:mb-5">
               {slides[active].eyebrow}
@@ -167,8 +160,10 @@ export default function HeroCarousel() {
             </button>
           </div>
 
-          {/* Dots — el area tocable es de 44px aunque la marca sea fina */}
-          <div className="flex gap-1 mt-8 sm:mt-12 md:mt-16 -ml-2">
+          {/* Dots — el area tocable es de 44px aunque la marca sea fina.
+              Debajo de md van anclados al borde inferior de la foto: pegados
+              al boton quedaban flotando en el medio. En md+ siguen el flujo. */}
+          <div className="absolute bottom-1 left-5 sm:left-8 md:static flex gap-1 md:mt-16 -ml-2">
             {slides.map((s, index) => (
               <button
                 key={s.id}

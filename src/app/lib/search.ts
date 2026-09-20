@@ -21,6 +21,34 @@ export const RUTA_CATALOGO = "/productos";
 /** Nombre del parametro donde viaja la consulta. */
 export const SEARCH_PARAM = "q";
 
+/**
+ * Endpoint de las sugerencias del buscador.
+ *
+ * Fuera del catalogo no hay productos en el cliente para filtrar, asi que el
+ * desplegable se los pide al servidor mientras se escribe.
+ */
+export const RUTA_SUGERENCIAS = "/api/buscar";
+
+/** Cuantos productos entran en el desplegable; el resto se ve en el catalogo. */
+export const SUGERENCIAS_MAXIMAS = 6;
+
+/** Lo minimo para pintar un renglon del desplegable. */
+export type Sugerencia = {
+  id: string;
+  title: string;
+  price: number;
+  stock: number;
+  categoryName: string;
+  /** Portada, o null si el producto todavia no tiene fotos. */
+  imagen: string | null;
+};
+
+export type ResultadoBusqueda = {
+  products: Sugerencia[];
+  /** Todo lo que matcheo, no solo lo que entro en el desplegable. */
+  total: number;
+};
+
 /** Nombre del parametro donde viaja la categoria elegida. */
 export const CATEGORY_PARAM = "cat";
 

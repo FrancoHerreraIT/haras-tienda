@@ -1,7 +1,14 @@
 "use client";
 
-import { ArrowUp, MapPin, MessageCircle } from "lucide-react";
+import Link from "next/link";
+import { ArrowUp, Mail, MapPin, MessageCircle } from "lucide-react";
 import { Great_Vibes } from "next/font/google";
+
+/* Las mismas sucursales que ofrece el checkout para retirar. */
+import { PICKUP_BRANCHES } from "@/app/lib/branches";
+/* Y los mismos datos de contacto que muestra /contacto. */
+import { STORE_CONTACT } from "@/app/lib/contacto";
+import InstagramGlyph from "@/components/InstagramGlyph";
 
 /* Misma firma de estancia que usa el Navbar */
 const greatVibes = Great_Vibes({
@@ -10,33 +17,6 @@ const greatVibes = Great_Vibes({
   display: "swap",
 });
 
-const sucursales = [
-  { nombre: "Centro", direccion: "Duarte Quirós 591" },
-  { nombre: "Homa Mall", direccion: "Ruta C45 · Km 1 · Local 2" },
-];
-
-/**
- * lucide-react ya no distribuye iconos de marca, así que dibujamos el glifo
- * de Instagram con el mismo trazo que el resto de los iconos.
- */
-function InstagramGlyph({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <rect width="20" height="20" x="2" y="2" rx="5" />
-      <circle cx="12" cy="12" r="4" />
-      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
-    </svg>
-  );
-}
 
 export default function Footer() {
   const scrollToTop = () =>
@@ -71,7 +51,7 @@ export default function Footer() {
               Sucursales
             </h3>
             <ul className="space-y-5">
-              {sucursales.map((s) => (
+              {PICKUP_BRANCHES.map((s) => (
                 <li key={s.nombre} className="flex gap-3">
                   <MapPin
                     className="w-4 h-4 mt-1 shrink-0 text-amber-800"
@@ -96,7 +76,7 @@ export default function Footer() {
             <ul className="space-y-4">
               <li>
                 <a
-                  href="https://instagram.com/harasdeleste"
+                  href={STORE_CONTACT.instagram.url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-3 py-1 text-stone-300 hover:text-amber-600 transition-colors group"
@@ -104,12 +84,14 @@ export default function Footer() {
                   <span className="flex items-center justify-center w-9 h-9 rounded-full border border-stone-700 group-hover:border-amber-800 transition-colors">
                     <InstagramGlyph className="w-[18px] h-[18px]" />
                   </span>
-                  <span className="text-[15px]">@harasdeleste</span>
+                  <span className="text-[15px]">
+                    {STORE_CONTACT.instagram.handle}
+                  </span>
                 </a>
               </li>
               <li>
                 <a
-                  href="https://wa.me/"
+                  href={STORE_CONTACT.whatsapp.url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-3 py-1 text-stone-300 hover:text-amber-600 transition-colors group"
@@ -120,7 +102,28 @@ export default function Footer() {
                   <span className="text-[15px]">WhatsApp</span>
                 </a>
               </li>
+              <li>
+                <a
+                  href={`mailto:${STORE_CONTACT.email}`}
+                  className="inline-flex items-center gap-3 py-1 text-stone-300 hover:text-amber-600 transition-colors group"
+                >
+                  <span className="flex items-center justify-center w-9 h-9 rounded-full border border-stone-700 group-hover:border-amber-800 transition-colors">
+                    <Mail className="w-[18px] h-[18px]" strokeWidth={1.75} />
+                  </span>
+                  <span className="text-[15px] break-all">
+                    {STORE_CONTACT.email}
+                  </span>
+                </a>
+              </li>
             </ul>
+
+            {/* Todo junto, mas los datos bancarios por si perdio el alias. */}
+            <Link
+              href="/contacto"
+              className="mt-6 inline-block text-sm text-amber-700 underline underline-offset-4 hover:text-amber-600 transition-colors"
+            >
+              Ver todos los datos de contacto
+            </Link>
           </div>
         </div>
 
@@ -129,9 +132,6 @@ export default function Footer() {
           <p className="text-xs text-stone-500">
             © {new Date().getFullYear()} Haras del Este. Todos los derechos
             reservados.
-          </p>
-          <p className="text-[10px] tracking-wide text-stone-600">
-            Envíos a todo el país
           </p>
         </div>
       </div>

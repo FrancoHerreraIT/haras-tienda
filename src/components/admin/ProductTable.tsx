@@ -2,7 +2,17 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Eye, EyeOff, ImageOff, Package, Pencil, Plus, Trash2 } from "lucide-react";
+import {
+  Eye,
+  EyeOff,
+  ImageOff,
+  Package,
+  PackageX,
+  Pencil,
+  Plus,
+  Star,
+  Trash2,
+} from "lucide-react";
 
 import Modal from "./Modal";
 import ConfirmDialog from "./ConfirmDialog";
@@ -33,6 +43,7 @@ export type ProductRow = {
   stock: number;
   images: string[];
   isActive: boolean;
+  isFeatured: boolean;
   categoryId: string;
   categoryName: string;
   orderItemCount: number;
@@ -104,12 +115,65 @@ export default function ProductTable({ rows, categories }: ProductTableProps) {
     </div>
   );
 
-  const stockClass = (stock: number) =>
-    stock === 0
-      ? "text-red-700"
-      : stock <= 3
-        ? "text-amber-700"
-        : "text-stone-700";
+  /* Una estrella al lado del titulo: en una tabla de siete columnas una
+     columna mas solo para esto obligaria a scrollear de costado. */
+  const estrella = (row: ProductRow) =>
+    row.isFeatured ? (
+      <Star
+        className="h-3.5 w-3.5 shrink-0 fill-[#8B5A2B] text-[#8B5A2B]"
+        aria-label="Destacado en la portada"
+      />
+    ) : null;
+
+  /**
+   * El stock en la tabla de escritorio: el numero pelado.
+   *
+   * Nada de etiquetas con texto aca. El panel mide ~770px y la tabla tiene
+   * siete columnas: una pildora de "Sin stock" en esta celda le come el ancho
+   * a Estado y empuja Acciones fuera del borde. En el escritorio el aviso lo
+   * dan el color del numero y la fila tenida, que no cuestan ancho; las
+   * palabras quedan para el encabezado de la pagina y para las tarjetas de
+   * mobile, que si tienen lugar.
+   */
+  const stockNumero = (stock: number) => (
+    <span
+      className={`text-[13px] tabular-nums ${
+        stock === 0
+          ? "font-bold text-red-700"
+          : stock <= 3
+            ? "font-bold text-amber-700"
+            : "font-semibold text-stone-700"
+      }`}
+    >
+      {stock}
+    </span>
+  );
+
+  /**
+   * El stock en las tarjetas de mobile, donde si hay lugar para palabras.
+   *
+   * Mismo vocabulario que la tienda: "Sin stock" y "Últimas N".
+   */
+  const stockEtiqueta = (stock: number) => {
+    if (stock === 0) {
+      return (
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-red-600 px-2.5 py-1 text-[11px] font-semibold tracking-wide text-white">
+          <PackageX className="h-3.5 w-3.5" aria-hidden />
+          Sin stock
+        </span>
+      );
+    }
+
+    if (stock <= 3) {
+      return (
+        <span className="inline-flex items-center rounded-full bg-amber-100 px-2.5 py-1 text-[11px] font-semibold tracking-wide text-amber-800">
+          Últimas {stock}
+        </span>
+      );
+    }
+
+    return <span className="text-[13px] font-semibold text-stone-700">{stock}</span>;
+  };
 
   return (
     <>
@@ -148,13 +212,24 @@ export default function ProductTable({ rows, categories }: ProductTableProps) {
               {rows.map((row) => (
                 <li
                   key={row.id}
-                  className={`p-4 ${row.isActive ? "" : "opacity-60"}`}
+                  /* Sin stock: la tarjeta entera se tine y lleva una barra
+                     roja al costado. En el telefono, donde solo entran tres o
+                     cuatro tarjetas por pantalla, es lo que hace que el
+                     producto agotado salte al deslizar. */
+                  className={`p-4 ${
+                    row.stock === 0
+                      ? "border-l-[3px] border-red-600 bg-red-50/60"
+                      : ""
+                  } ${row.isActive ? "" : "opacity-60"}`}
                 >
                   <div className="flex gap-3">
                     {thumb(row, "h-16 w-16")}
 
                     <div className="min-w-0 flex-1">
-                      <p className="font-semibold text-stone-800">{row.title}</p>
+                      <p className="flex items-center gap-1.5 font-semibold text-stone-800">
+                        <span className="truncate">{row.title}</span>
+                        {estrella(row)}
+                      </p>
                       <p className="mt-0.5 text-xs text-stone-500">
                         {row.categoryName}
                       </p>
@@ -174,11 +249,8 @@ export default function ProductTable({ rows, categories }: ProductTableProps) {
                     )}
                   </div>
 
-                  <p className="mt-3 text-xs text-stone-500">
-                    Stock:{" "}
-                    <span className={`font-semibold ${stockClass(row.stock)}`}>
-                      {row.stock}
-                    </span>
+                  <p className="mt-3 flex items-center gap-2 text-xs text-stone-500">
+                    Stock: {stockEtiqueta(row.stock)}
                   </p>
 
                   <div className="mt-3 flex flex-wrap gap-1 border-t border-stone-100 pt-3">
@@ -190,16 +262,35 @@ export default function ProductTable({ rows, categories }: ProductTableProps) {
 
             {/* Desktop: la tabla completa */}
             <div className="hidden overflow-x-auto lg:block">
-            <table className="w-full text-left text-sm">
+            {/* table-fixed: el ancho de cada columna lo fija el encabezado y no
+                el contenido. Con el layout automatico, el `truncate` de los
+                titulos (que es white-space: nowrap) hace que el ancho minimo de
+                la columna sea el texto entero: un nombre de producto largo
+                estiraba la tabla mas alla del panel y aparecia la barra de
+                desplazamiento horizontal. Con anchos fijos el texto se recorta
+                con puntos suspensivos, que es lo que ya se pretendia.
+
+                Los anchos van en px y no en las clases de Tailwind porque el
+                rem del sitio esta al 67% (globals.css): `w-16` no daria 64px
+                sino 43. */}
+            <table className="w-full table-fixed text-left text-sm">
               <thead className="border-b border-stone-200 bg-stone-50/80">
                 <tr className="text-[11px] tracking-wide text-stone-500">
-                  <th className="px-4 py-3 font-semibold">Foto</th>
+                  <th className="w-[56px] px-4 py-3 font-semibold">Foto</th>
+                  {/* Sin ancho: se queda con lo que sobra. */}
                   <th className="px-4 py-3 font-semibold">Producto</th>
-                  <th className="px-4 py-3 font-semibold">Categoria</th>
-                  <th className="px-4 py-3 text-right font-semibold">Precio</th>
-                  <th className="px-4 py-3 text-right font-semibold">Stock</th>
-                  <th className="px-4 py-3 font-semibold">Estado</th>
-                  <th className="sticky right-0 bg-stone-50 px-4 py-3 text-right font-semibold shadow-[-8px_0_8px_-8px_rgba(0,0,0,0.12)]">
+                  <th className="w-[96px] px-4 py-3 font-semibold">Categoria</th>
+                  <th className="w-[84px] px-4 py-3 text-right font-semibold">
+                    Precio
+                  </th>
+                  {/* Centrada: el numero es de una o dos cifras y alineado a la
+                      derecha queda debajo del final del rotulo, no debajo de la
+                      palabra, y se lee como si estuviera corrido. */}
+                  <th className="w-[60px] px-4 py-3 text-center font-semibold">
+                    Stock
+                  </th>
+                  <th className="w-[84px] px-4 py-3 font-semibold">Estado</th>
+                  <th className="sticky right-0 w-[224px] bg-stone-50 px-4 py-3 text-right font-semibold shadow-[-8px_0_8px_-8px_rgba(0,0,0,0.12)]">
                     Acciones
                   </th>
                 </tr>
@@ -208,14 +299,30 @@ export default function ProductTable({ rows, categories }: ProductTableProps) {
                 {rows.map((row) => (
                   <tr
                     key={row.id}
-                    className={`group hover:bg-stone-50/60 ${
-                      row.isActive ? "" : "opacity-60"
-                    }`}
+                    /* La fila sin stock se tine entera: el ojo la encuentra
+                       barriendo la lista de arriba abajo, sin tener que leer
+                       la columna de stock una por una. */
+                    className={`group ${
+                      row.stock === 0
+                        ? "bg-red-50 hover:bg-red-100"
+                        : "hover:bg-stone-50/60"
+                    } ${row.isActive ? "" : "opacity-60"}`}
                   >
-                    <td className="px-4 py-4">{thumb(row, "h-12 w-12")}</td>
-                    <td className="max-w-[280px] px-4 py-4">
-                      <p className="truncate font-semibold text-stone-800">
-                        {row.title}
+                    {/* El borde va transparente cuando hay stock para que la
+                        columna no se corra 3px entre una fila y otra. */}
+                    <td
+                      className={`border-l-[3px] px-4 py-4 ${
+                        row.stock === 0
+                          ? "border-red-600"
+                          : "border-transparent"
+                      }`}
+                    >
+                      {thumb(row, "h-12 w-12")}
+                    </td>
+                    <td className="px-4 py-4">
+                      <p className="flex items-center gap-1.5 font-semibold text-stone-800">
+                        <span className="truncate">{row.title}</span>
+                        {estrella(row)}
                       </p>
                       {row.description && (
                         <p className="mt-0.5 truncate text-xs text-stone-400">
@@ -224,15 +331,13 @@ export default function ProductTable({ rows, categories }: ProductTableProps) {
                       )}
                     </td>
                     <td className="px-4 py-4 text-stone-500">
-                      {row.categoryName}
+                      <span className="block truncate">{row.categoryName}</span>
                     </td>
                     <td className="px-4 py-4 text-right font-semibold text-stone-800">
                       {formatARS(row.price)}
                     </td>
-                    <td className="px-4 py-4 text-right">
-                      <span className={`font-semibold ${stockClass(row.stock)}`}>
-                        {row.stock}
-                      </span>
+                    <td className="px-4 py-4 text-center">
+                      {stockNumero(row.stock)}
                     </td>
                     <td className="px-4 py-4">
                       {row.isActive ? (
@@ -247,7 +352,13 @@ export default function ProductTable({ rows, categories }: ProductTableProps) {
                     </td>
                     {/* sticky: la tabla es mas ancha que el panel, y sin esto
                         el boton Eliminar quedaba cortado a la derecha. */}
-                    <td className="sticky right-0 bg-white px-4 py-4 shadow-[-8px_0_8px_-8px_rgba(0,0,0,0.12)] group-hover:bg-stone-50">
+                    <td
+                      className={`sticky right-0 px-4 py-4 shadow-[-8px_0_8px_-8px_rgba(0,0,0,0.12)] ${
+                        row.stock === 0
+                          ? "bg-red-50 group-hover:bg-red-100"
+                          : "bg-white group-hover:bg-stone-50"
+                      }`}
+                    >
                       <div className="flex justify-end gap-1">
                         {rowActions(row)}
                       </div>
@@ -368,21 +479,42 @@ export default function ProductTable({ rows, categories }: ProductTableProps) {
             onChanged={form.markDirty}
           />
 
-          <label className="flex items-center gap-3 rounded-lg border border-stone-200 bg-white px-4 py-3">
-            <input
-              type="checkbox"
-              name="isActive"
-              defaultChecked={current?.isActive ?? true}
-              className="h-5 w-5 shrink-0 accent-[#8B5A2B]"
-            />
-            <span className="text-sm text-stone-700">
-              Producto activo
-              <span className="block text-xs text-stone-400">
-                Si lo desactivas deja de aparecer en la tienda, pero conserva su
-                historial de ventas.
+          <div className="space-y-3">
+            <label className="flex items-center gap-3 rounded-lg border border-stone-200 bg-white px-4 py-3">
+              <input
+                type="checkbox"
+                name="isActive"
+                defaultChecked={current?.isActive ?? true}
+                className="h-5 w-5 shrink-0 accent-[#8B5A2B]"
+              />
+              <span className="text-sm text-stone-700">
+                Producto activo
+                <span className="block text-xs text-stone-400">
+                  Si lo desactivas deja de aparecer en la tienda, pero conserva su
+                  historial de ventas.
+                </span>
               </span>
-            </span>
-          </label>
+            </label>
+
+            {/* Destacar no publica: un producto inactivo marcado como
+                destacado igual no se ve, porque la tienda filtra por isActive
+                antes de ordenar por isFeatured. */}
+            <label className="flex items-center gap-3 rounded-lg border border-stone-200 bg-white px-4 py-3">
+              <input
+                type="checkbox"
+                name="isFeatured"
+                defaultChecked={current?.isFeatured ?? false}
+                className="h-5 w-5 shrink-0 accent-[#8B5A2B]"
+              />
+              <span className="text-sm text-stone-700">
+                Establecer como destacado en la pagina principal
+                <span className="block text-xs text-stone-400">
+                  Sube a la cabeza de la grilla de la portada, adelante del
+                  resto del catalogo. El ultimo que tildes queda primero.
+                </span>
+              </span>
+            </label>
+          </div>
 
           {form.error && (
             <p

@@ -30,6 +30,8 @@ interface CartState {
   addToCart: (product: Product) => void;
   removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
+  /** Vacia el carrito (y su copia en localStorage). */
+  clearCart: () => void;
   getTotalPrice: () => number;
   getTotalItems: () => number;
 }
@@ -95,6 +97,11 @@ export const useCartStore = create<CartState>()(
             ),
           };
         }),
+
+      /* Lo llama /checkout/success cuando el pago volvio aprobado: hasta ese
+         momento el carrito se conserva, asi el que abandona el pago lo
+         encuentra intacto al volver. */
+      clearCart: () => set({ items: [] }),
 
       getTotalPrice: () =>
         get().items.reduce((total, item) => total + item.price * item.quantity, 0),
