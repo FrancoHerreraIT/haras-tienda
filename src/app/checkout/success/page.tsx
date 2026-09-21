@@ -41,8 +41,6 @@ export default function CheckoutSuccessPage({
     <CheckoutStatus
       variant="success"
       paymentId={primero(params.payment_id) ?? primero(params.collection_id)}
-      status={primero(params.status) ?? primero(params.collection_status)}
-      externalReference={primero(params.external_reference)}
     />
   );
 }

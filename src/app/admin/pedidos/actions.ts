@@ -18,18 +18,21 @@
  *    lo movio, el update no encuentra la fila y el stock no se toca.
  *  - El descuento sale de lib/stock, el mismo codigo que usa el webhook.
  *
- * Del panel salen dos de los tres mails de la tienda, uno por cada paso que
- * el cliente esta esperando:
+ * Del panel salen tres de los cuatro mails de la tienda, uno por cada paso
+ * que el cliente esta esperando:
  *  - `paid` -> "¡Pago exitoso!" (lib/paidEmail), el mismo que manda el
  *    webhook de Mercado Pago. Aca es el cierre del flujo de transferencia: el
  *    cliente transfirio a ciegas y este es el mail que le dice que la plata
  *    llego. Por eso se manda aunque el webhook use la misma plantilla — los
  *    dos caminos son excluyentes, una orden se acredita por uno o por otro.
- *  - `ready_for_pickup` -> "¡Tu pedido está listo!" (lib/pickupEmail), el
- *    unico aviso que solo puede salir de aca: no hay nada automatico que
- *    sepa que el pedido ya esta armado en el mostrador.
- * El tercero, "pedido recibido" con el alias, sale al crear la orden
- * (checkout/actions.ts). Entregado y cancelado no mandan nada.
+ *  - `ready_for_pickup` -> "¡Tu pedido está listo!" (lib/pickupEmail).
+ *  - `delivered` -> "¡Gracias por tu compra!" (lib/deliveredEmail), el que
+ *    cierra la compra con la constancia de lo que se llevo.
+ * Los ultimos dos solo pueden salir de aca: no hay nada automatico que sepa
+ * que el pedido esta armado en el mostrador, ni que la persona ya se lo
+ * llevo. El cuarto, "pedido recibido" con el alias, sale al crear la orden
+ * (checkout/actions.ts). Cancelado no manda nada: quien cancela ya se entero
+ * por donde venia hablando.
  */
 import { revalidatePath } from "next/cache";
 
@@ -37,6 +40,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/app/lib/prisma";
 import {
   ESTADO_CANCELADO,
+  ESTADO_ENTREGADO,
   ESTADO_LISTO_PARA_RETIRAR,
   ESTADO_PAGADO,
 } from "@/app/lib/orders";
@@ -44,6 +48,7 @@ import {
   StockInsuficienteError,
   descontarStockDelPedido,
 } from "@/app/lib/stock";
+import { notificarPedidoEntregado } from "@/app/lib/deliveredEmail";
 import { notificarPagoConfirmado } from "@/app/lib/paidEmail";
 import { notificarPedidoListo } from "@/app/lib/pickupEmail";
 import {
@@ -222,14 +227,20 @@ export async function actualizarEstadoPedido(
          dos veces del mismo pago, o mandar a la sucursal a alguien que quizas
          ya retiro.
 
-         Ninguna de las dos funciones lanza: si el correo no sale, el pedido
-         igual quedo pagado/preparado y el fallo queda en el historial. Lo
-         contrario (devolverle un error al admin por algo que si se hizo) lo
-         llevaria a apretar el boton de nuevo. */
+         Ninguna de las tres funciones lanza: si el correo no sale, el pedido
+         igual quedo pagado/preparado/entregado y el fallo queda en el
+         historial. Lo contrario (devolverle un error al admin por algo que si
+         se hizo) lo llevaria a apretar el boton de nuevo.
+
+         `delivered` es estado final: ese mail se manda una sola vez y no hay
+         reintento posible desde el panel, porque el pedido ya no se puede
+         volver a mover. */
       if (nuevoEstado === ESTADO_PAGADO) {
         await notificarPagoConfirmado(orderId);
       } else if (nuevoEstado === ESTADO_LISTO_PARA_RETIRAR) {
         await notificarPedidoListo(orderId);
+      } else if (nuevoEstado === ESTADO_ENTREGADO) {
+        await notificarPedidoEntregado(orderId);
       }
 
       revalidarPedidos();

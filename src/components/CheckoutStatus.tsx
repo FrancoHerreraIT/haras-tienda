@@ -52,12 +52,18 @@ const ESTILOS: Record<CheckoutStatusVariant, Estilo> = {
 
 export interface CheckoutStatusProps {
   variant: CheckoutStatusVariant;
-  /** `payment_id` que agrega Mercado Pago al volver, si vino. */
+  /**
+   * `payment_id` que agrega Mercado Pago al volver, si vino.
+   *
+   * Es el unico dato de la operacion que se le muestra al comprador: es el
+   * numero que sirve para reclamar, tanto con nosotros como con Mercado Pago.
+   * El `status` crudo ("approved") y el `external_reference` (nuestro uuid)
+   * estan en la query y se siguen leyendo en el webhook, pero en pantalla no
+   * le dicen nada a quien acaba de comprar: el estado ya lo cuenta el titulo
+   * de la tarjeta y el uuid es ruido que ademas invita a confundirlo con el
+   * numero de pedido (que es el corto, el que va en los mails).
+   */
   paymentId?: string | null;
-  /** `status` del pago informado en la URL de retorno. */
-  status?: string | null;
-  /** Nuestra referencia de la compra (`external_reference`). */
-  externalReference?: string | null;
 }
 
 /**
@@ -70,8 +76,6 @@ export interface CheckoutStatusProps {
 export default function CheckoutStatus({
   variant,
   paymentId,
-  status,
-  externalReference,
 }: CheckoutStatusProps) {
   const estilo = ESTILOS[variant];
   const Icono = estilo.icono;
@@ -107,30 +111,14 @@ export default function CheckoutStatus({
             {estilo.detalle}
           </p>
 
-          {(paymentId || externalReference) && (
+          {paymentId && (
             <dl className="mt-8 border-t border-stone-200 pt-6 space-y-2 text-left text-[13px]">
-              {paymentId && (
-                <div className="flex justify-between gap-4">
-                  <dt className="text-stone-500">Nº de operación</dt>
-                  <dd className="font-semibold text-stone-800 tabular-nums">
-                    {paymentId}
-                  </dd>
-                </div>
-              )}
-              {status && (
-                <div className="flex justify-between gap-4">
-                  <dt className="text-stone-500">Estado informado</dt>
-                  <dd className="font-semibold text-stone-800">{status}</dd>
-                </div>
-              )}
-              {externalReference && (
-                <div className="flex justify-between gap-4">
-                  <dt className="text-stone-500">Referencia</dt>
-                  <dd className="font-mono text-[11px] text-stone-600 break-all">
-                    {externalReference}
-                  </dd>
-                </div>
-              )}
+              <div className="flex justify-between gap-4">
+                <dt className="text-stone-500">Nº de operación</dt>
+                <dd className="font-semibold text-stone-800 tabular-nums">
+                  {paymentId}
+                </dd>
+              </div>
             </dl>
           )}
 

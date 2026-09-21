@@ -24,8 +24,6 @@ export default async function CheckoutFailurePage({
     <CheckoutStatus
       variant="failure"
       paymentId={primero(params.payment_id) ?? primero(params.collection_id)}
-      status={primero(params.status) ?? primero(params.collection_status)}
-      externalReference={primero(params.external_reference)}
     />
   );
 }

@@ -113,6 +113,34 @@ function Dato({ label, children }: { label: string; children: React.ReactNode })
 }
 
 /**
+ * Deja legible la nota que el webhook de Mercado Pago escribe en el historial.
+ *
+ * `notaDelPago` (api/webhooks/mp) guarda el resumen crudo de la acreditacion:
+ * "Pago 1790… (accredited) via account_money por $15000 - DNI 12345678". En la
+ * base se sigue guardando entero y a proposito — es el rastro con el que se
+ * cruza una acreditacion contra Mercado Pago cuando algo no cierra —, pero en
+ * el historial que mira el admin no aporta: el detalle interno del medio de
+ * pago es ruido, y el documento del pagador no tiene por que quedar a la vista
+ * de cualquiera que abra el pedido.
+ *
+ * Se limpia al renderizar y no en el webhook justo por eso: la fila conserva
+ * todo y los pedidos ya cargados se ven bien sin migrar nada.
+ *
+ * Del bloque queda lo unico accionable, el numero de operacion. El prefijo de
+ * cada nota no se toca: los cinco casos del webhook (acreditado, sin stock,
+ * revertido, informado sobre un pedido ya cobrado…) dicen cosas distintas y
+ * todos tienen que seguir leyendose.
+ */
+const RESUMEN_CRUDO_DEL_PAGO =
+  /Pago (d+)(?:s+([^)]*))?(?:s+vias+S+)?(?:s+pors+$[d.,]+)?(?:s+-s+S+s+[d.-]+)?/g;
+
+function limpiarNota(notas: string): string {
+  return notas
+    .replace(RESUMEN_CRUDO_DEL_PAGO, "N° de operación: $1.")
+    .replace(/^Pago acreditado. /, "Pago acreditado correctamente. ");
+}
+
+/**
  * Lo que dispara cada boton de estado del modal.
  *
  * Que boton aparece lo decide TRANSICIONES_MANUALES (via puedePasarA); aca
@@ -666,7 +694,7 @@ export default function OrderTable({ rows }: { rows: OrderRow[] }) {
                       </div>
                       {log.notes && (
                         <p className="mt-1 text-sm text-stone-600">
-                          {log.notes}
+                          {limpiarNota(log.notes)}
                         </p>
                       )}
                     </li>
