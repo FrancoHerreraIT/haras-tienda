@@ -82,8 +82,8 @@ export function armarMailListoParaRetirar(datos: DatosMailListoParaRetirar) {
     ...(horario ? [`Horarios: ${horario}`] : []),
     "",
     "QUÉ LLEVAR",
-    "  - Tu DNI. Es lo único que necesitás: no hace falta el número de pedido.",
-    ...(retira ? [`  - Lo puede retirar ${retira} presentando su DNI.`] : []),
+    "  - Tu DNI",
+    ...(retira ? [`  - Lo puede retirar ${retira} con su documento.`] : []),
     "",
     ...detalleTexto({ items: datos.items, desglose, totalLabel: ROTULO_TOTAL }),
     "",
@@ -105,10 +105,9 @@ export function armarMailListoParaRetirar(datos: DatosMailListoParaRetirar) {
               : ""
           }
           <p style="margin:12px 0 0;font-family:${FUENTE_MAIL};font-size:14px;line-height:1.6;color:${c.secundario};">
-            Alcanza con que presentes tu <strong>DNI</strong>: no hace falta el
-            número de pedido.${
+            Para retirar tu pedido, presentá tu <strong>DNI</strong>.${
               retira
-                ? ` Lo puede retirar <strong>${escaparHtml(retira)}</strong> presentando su DNI.`
+                ? ` Lo puede retirar <strong>${escaparHtml(retira)}</strong> con su documento.`
                 : ""
             }
           </p>`,

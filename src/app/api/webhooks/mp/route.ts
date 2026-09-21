@@ -143,25 +143,22 @@ function datosDelComprador(
   return datos;
 }
 
-/** Resumen del pago para dejar asentado en el historial del pedido. */
-function notaDelPago(pago: PagoMP): string {
-  const partes = [
-    `Pago ${pago.id}`,
-    pago.status_detail ? `(${pago.status_detail})` : null,
-    pago.payment_method_id ? `via ${pago.payment_method_id}` : null,
-    pago.transaction_amount != null ? `por $${pago.transaction_amount}` : null,
-  ];
-
-  /* El documento con el que pago en MP puede no ser el de facturacion
-     (Order.customerTaxId): se deja en la nota para poder cruzarlos. */
-  const documento = pago.payer?.identification;
-
-  if (documento?.type && documento?.number) {
-    partes.push(`- ${documento.type} ${documento.number}`);
-  }
-
-  return partes.filter(Boolean).join(" ");
-}
+/**
+ * Como se referencia el pago en el historial del pedido.
+ *
+ * Solo el numero de operacion: es el unico dato del payload que le sirve a
+ * quien lee el historial, porque es con el que se busca el pago en el panel
+ * de Mercado Pago. Lo demas que traia antes esta nota — `status_detail`,
+ * `payment_method_id`, el importe y el documento del pagador — era el payload
+ * crudo pegado al final, ilegible en la UI y, en el caso del documento, un
+ * dato personal a la vista de cualquiera que abriera el pedido.
+ *
+ * El importe ya esta en la orden y el medio de pago en `Order.paymentMethod`:
+ * nada de eso se pierde por sacarlo de aca. El documento del pagador, si
+ * alguna vez hace falta cruzarlo, esta en Mercado Pago contra este numero.
+ */
+const referenciaDelPago = (pago: PagoMP): string =>
+  `N° de operación: ${pago.id}.`;
 
 type ResultadoAcreditacion = "acreditado" | "ya_procesado" | "sin_stock";
 
@@ -208,7 +205,7 @@ async function acreditarPedido(
           orderId: orden.id,
           status: ESTADO_PAGADO,
           notes:
-            `Pago acreditado. ${notaDelPago(pago)}` +
+            `Pago acreditado correctamente. ${referenciaDelPago(pago)}` +
             (descontado
               ? ""
               : " El stock ya se había descontado antes para este pedido: no se volvió a descontar."),
@@ -252,7 +249,7 @@ async function marcarPagadoSinStock(orden: OrdenParaAcreditar, pago: PagoMP) {
       data: {
         orderId: orden.id,
         status: ESTADO_PAGADO,
-        notes: `Pago acreditado SIN stock suficiente: revisar a mano antes de despachar. ${notaDelPago(pago)}`,
+        notes: `Pago acreditado SIN stock suficiente: revisar a mano antes de despachar. ${referenciaDelPago(pago)}`,
       },
     }),
   ]);
@@ -455,7 +452,7 @@ export async function POST(request: NextRequest) {
         data: {
           orderId: orden.id,
           status: orden.status,
-          notes: `Mercado Pago informa el pago como "${pago.status}" sobre un pedido ya cobrado: revisar en Mercado Pago. ${notaDelPago(pago)}`,
+          notes: `Mercado Pago informa el pago como "${pago.status}" sobre un pedido ya cobrado: revisar en Mercado Pago. ${referenciaDelPago(pago)}`,
         },
       });
 
@@ -506,7 +503,7 @@ export async function POST(request: NextRequest) {
         orden,
         pago,
         ESTADO_CANCELADO,
-        `Pago revertido (${pago.status}). El stock NO se repuso: revisar a mano. ${notaDelPago(pago)}`,
+        `Pago revertido (${pago.status}). El stock NO se repuso: revisar a mano. ${referenciaDelPago(pago)}`,
       );
 
       console.warn("[webhook mp] pago revertido sobre un pedido ya cobrado", {
@@ -521,7 +518,7 @@ export async function POST(request: NextRequest) {
       orden,
       pago,
       nuevoEstado,
-      `Estado actualizado desde Mercado Pago (${pago.status}). ${notaDelPago(pago)}`,
+      `Estado actualizado desde Mercado Pago (${pago.status}). ${referenciaDelPago(pago)}`,
     );
 
     console.info("[webhook mp] estado del pedido actualizado", {

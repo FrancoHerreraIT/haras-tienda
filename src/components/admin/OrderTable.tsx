@@ -115,21 +115,24 @@ function Dato({ label, children }: { label: string; children: React.ReactNode })
 /**
  * Deja legible la nota que el webhook de Mercado Pago escribe en el historial.
  *
- * `notaDelPago` (api/webhooks/mp) guarda el resumen crudo de la acreditacion:
- * "Pago 1790… (accredited) via account_money por $15000 - DNI 12345678". En la
- * base se sigue guardando entero y a proposito — es el rastro con el que se
- * cruza una acreditacion contra Mercado Pago cuando algo no cierra —, pero en
- * el historial que mira el admin no aporta: el detalle interno del medio de
- * pago es ruido, y el documento del pagador no tiene por que quedar a la vista
- * de cualquiera que abra el pedido.
+ * Es solo para las filas viejas. El webhook ya escribe la nota limpia
+ * (`referenciaDelPago` en api/webhooks/mp), pero hasta ese cambio guardaba el
+ * resumen crudo del payload: "Pago 1790… (accredited) via account_money por
+ * $15000 - DNI 12345678". Esas filas siguen en la base, y sin esto el
+ * historial de cualquier pedido anterior se ve como se veia antes — con el
+ * detalle interno del medio de pago y, peor, con el documento del pagador a la
+ * vista de cualquiera que abra el pedido.
  *
- * Se limpia al renderizar y no en el webhook justo por eso: la fila conserva
- * todo y los pedidos ya cargados se ven bien sin migrar nada.
+ * Se resuelve al renderizar y no migrando: la fila conserva el payload por si
+ * alguna vez hay que auditarla, y no hay que tocar datos historicos para que
+ * el panel se vea bien.
  *
  * Del bloque queda lo unico accionable, el numero de operacion. El prefijo de
  * cada nota no se toca: los cinco casos del webhook (acreditado, sin stock,
  * revertido, informado sobre un pedido ya cobrado…) dicen cosas distintas y
  * todos tienen que seguir leyendose.
+ *
+ * Cuando ya no queden pedidos viejos en el panel, esto se puede borrar.
  */
 const RESUMEN_CRUDO_DEL_PAGO =
   /Pago (d+)(?:s+([^)]*))?(?:s+vias+S+)?(?:s+pors+$[d.,]+)?(?:s+-s+S+s+[d.-]+)?/g;

@@ -79,7 +79,7 @@ export function armarMailPagoConfirmado(datos: DatosMailPagoConfirmado) {
     ...detalleTexto({ items: datos.items, desglose, totalLabel: ROTULO_TOTAL }),
     "",
     `RETIRO: ${sucursal}`,
-    "Te avisamos por este mismo mail cuando esté listo para retirar. Para retirarlo alcanza con el DNI: no hace falta llevar ningún número de pedido.",
+    "Te avisamos por este mismo mail cuando esté listo para retirar. Para retirar tu pedido, presentá tu DNI.",
     "",
     `¿Alguna duda? Escribinos a ${STORE_CONTACT.email} o por WhatsApp al ${STORE_CONTACT.whatsapp.display}.`,
     "",
@@ -104,8 +104,7 @@ export function armarMailPagoConfirmado(datos: DatosMailPagoConfirmado) {
                     `<p style="margin:0;font-family:${FUENTE_MAIL};font-size:15px;line-height:1.6;color:${c.texto};">${escaparHtml(sucursal)}</p>
           <p style="margin:8px 0 0;font-family:${FUENTE_MAIL};font-size:14px;line-height:1.6;color:${c.secundario};">
             Te avisamos por este mismo mail cuando esté listo para retirar.
-            Para retirarlo alcanza con el <strong>DNI</strong>: no hace falta
-            llevar ningún número de pedido.
+            Para retirar tu pedido, presentá tu <strong>DNI</strong>.
           </p>`,
                   )}
                 </div>
