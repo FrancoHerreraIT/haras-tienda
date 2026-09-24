@@ -10,7 +10,7 @@ import AdminShortcut from "@/components/AdminShortcut";
 import CategoryMenu from "@/components/CategoryMenu";
 import SearchBox from "@/components/SearchBox";
 import { useHydrated } from "@/app/lib/useHydrated";
-import { RUTA_CATALOGO } from "@/app/lib/search";
+import { RUTA_CATALOGO, hrefCategoria, normalizar } from "@/app/lib/search";
 import type { StoreCategory } from "@/app/lib/storeData";
 
 /* Firma de estancia para el logo */
@@ -30,11 +30,19 @@ const INICIO = { label: "Inicio", href: "/" };
    se muestra igual pero no navega: la barra queda completa y nadie cae en un
    404. El destino ya esta escrito — al crear la pagina se cambia a true y el
    link se enciende solo. */
-const linksRestantes = [
-  { label: "Combos", href: "/combos", listo: false },
-  { label: "Nosotros", href: "/nosotros", listo: false },
+const linksFijos = [
+  { label: "Cómo Comprar", href: "/como-comprar", listo: true },
   { label: "Contacto", href: "/contacto", listo: true },
 ];
+
+/* "Combos" no es una pagina propia sino un rubro del catalogo: el renglon es un
+   atajo a /productos ya filtrado, que es la misma vista que abre el menu de
+   "Productos" (sidebar de rubros incluido).
+   Se resuelve por nombre y no con un href fijo porque el filtro viaja como
+   `?cat=<id>` y ese id es el uuid que genera la base (ver schema.prisma): el de
+   produccion no es el de desarrollo, asi que escribirlo a mano daria un filtro
+   vacio en cuanto cambie de base o se vuelva a sembrar. */
+const CATEGORIA_COMBOS = "Combos";
 
 /* Renglon comun de la barra. El borde inferior va siempre, transparente cuando
    no es la pagina actual: si apareciera recien al activarse, el renglon se
@@ -92,6 +100,25 @@ export default function Navbar({ categories }: NavbarProps) {
   /* Sin categorias cargadas no hay nada que desplegar: "Productos" vuelve a
      ser el ancla al listado. */
   const hayCategorias = categories.length > 0;
+
+  /* El rubro "Combos", si es que hay alguno cargado. getStoreCategories deja
+     afuera las categorias sin productos activos, asi que no encontrarlo aca
+     significa que todavia no hay combos que mostrar: en ese caso el renglon
+     queda apagado como los otros pendientes, en vez de llevar a una grilla
+     vacia. Se enciende solo en cuanto le carguen el primer producto.
+     normalizar() compara sin tildes ni mayusculas, igual que el buscador. */
+  const combos = categories.find(
+    (categoria) => normalizar(categoria.name) === normalizar(CATEGORIA_COMBOS),
+  );
+
+  const linksRestantes = [
+    {
+      label: "Combos",
+      href: combos ? hrefCategoria(combos.id) : RUTA_CATALOGO,
+      listo: Boolean(combos),
+    },
+    ...linksFijos,
+  ];
 
   /* Envuelve al boton y a los dos paneles: lo de adentro no cuenta como
      "tocar afuera", asi el toggle del boton no se pelea con el cierre. */

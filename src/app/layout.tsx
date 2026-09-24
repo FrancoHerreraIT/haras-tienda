@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Great_Vibes, Playfair_Display, Source_Sans_3 } from "next/font/google";
 import "./globals.css";
+import { getAppBaseUrl } from "@/app/lib/mercadopago";
 
 /* Firma de estancia: cursiva clásica para el logo */
 const greatVibes = Great_Vibes({
@@ -25,6 +26,10 @@ const sourceSans = Source_Sans_3({
 });
 
 export const metadata: Metadata = {
+  /* Base contra la que Next resuelve las URLs relativas de openGraph,
+     canonical, etc. Sale de la misma funcion que las back_urls de Mercado
+     Pago, asi el dominio se configura en un solo lugar (APP_BASE_URL). */
+  metadataBase: new URL(getAppBaseUrl()),
   title: "Haras del Este | Campo, Cocina y Hogar",
   description:
     "Tienda online de Haras del Este: tablas de asado, cuchillería artesanal y artículos de campo. Retirás tu pedido en cualquiera de nuestras dos sucursales.",
