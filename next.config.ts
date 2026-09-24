@@ -23,6 +23,25 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     "/*": ["./public/logo-haras-mail.png"],
   },
+
+  /* El dominio oficial es harasdeleste.com.ar: el de Vercel sigue vivo pero
+     se redirige entero, con la misma ruta y query, para no tener dos copias
+     del sitio indexadas. Solo matchea ese host exacto, asi que los previews
+     (haras-tienda-git-*.vercel.app) y localhost no se tocan.
+     `permanent: true` responde 308 y no 301: para buscadores es lo mismo,
+     pero 308 conserva el metodo. Importa por el webhook de Mercado Pago —
+     las preferencias creadas antes del cambio de dominio siguen notificando
+     con POST al dominio viejo, y un 301 lo puede convertir en GET. */
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "haras-tienda.vercel.app" }],
+        destination: "https://harasdeleste.com.ar/:path*",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
