@@ -96,6 +96,7 @@ interface DatosComprador {
   /* Facturacion */
   razonSocial: string;
   documento: string;
+  domicilio: string;
   email: string;
   telefono: string;
   /* Quien retira */
@@ -116,6 +117,7 @@ type CampoComprador = keyof DatosComprador;
 const ORDEN_DE_LECTURA = [
   "razonSocial",
   "documento",
+  "domicilio",
   "email",
   "telefono",
   "retiroPersonal",
@@ -130,6 +132,7 @@ type CampoValidable = (typeof ORDEN_DE_LECTURA)[number];
 const DATOS_VACIOS: DatosComprador = {
   razonSocial: "",
   documento: "",
+  domicilio: "",
   email: "",
   telefono: "",
   retiroNombre: "",
@@ -176,6 +179,7 @@ function aCheckoutCustomer(
     phone: datos.telefono.trim(),
     taxId: datos.documento.trim(),
     taxCondition: condicionIva,
+    billingAddress: datos.domicilio.trim(),
     pickupFirstName: retiro.firstName,
     pickupLastName: retiro.lastName,
     pickupDni: retiro.dni,
@@ -279,6 +283,10 @@ export default function CheckoutPage() {
       condicionIva,
     );
     if (errorDocumento) nuevos.documento = errorDocumento;
+
+    if (datos.domicilio.trim() === "") {
+      nuevos.domicilio = "Ingresá el domicilio de facturación.";
+    }
 
     if (datos.email.trim() === "") {
       nuevos.email = "Ingresá tu email.";
@@ -498,6 +506,18 @@ export default function CheckoutPage() {
                     )}
                   </select>
                 </div>
+
+                <Field
+                  id="domicilio"
+                  value={datos.domicilio}
+                  onChange={actualizar("domicilio")}
+                  error={errores.domicilio}
+                  label="Domicilio de facturación"
+                  placeholder="Av. Colón 1234, Córdoba"
+                  autoComplete="street-address"
+                  maxLength={200}
+                  className="sm:col-span-2"
+                />
 
                 <Field
                   id="email"

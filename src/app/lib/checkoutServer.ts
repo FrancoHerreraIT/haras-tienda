@@ -99,6 +99,9 @@ const texto = (valor: unknown) =>
 /** Tope de largo para los textos libres: nombres y razones sociales. */
 const MAX_TEXTO = 120;
 
+/** Tope para el domicilio: calle, numero, piso, localidad y provincia. */
+const MAX_DOMICILIO = 200;
+
 /**
  * Revisa lo que el formulario exige de facturacion y de retiro.
  *
@@ -111,6 +114,7 @@ function errorDatosCliente(datos: {
   telefono: string | null;
   documento: string | null;
   condicion: unknown;
+  domicilio: string | null;
   retiroNombre: string | null;
   retiroApellido: string | null;
   retiroDni: string | null;
@@ -128,6 +132,11 @@ function errorDatosCliente(datos: {
     datos.condicion,
   );
   if (errorDocumento) return errorDocumento;
+
+  if (!datos.domicilio) return "Ingresá el domicilio de facturación.";
+  if (datos.domicilio.length > MAX_DOMICILIO) {
+    return `El domicilio no puede superar los ${MAX_DOMICILIO} caracteres.`;
+  }
 
   if (!datos.retiroNombre || !datos.retiroApellido) {
     return "Indicá el nombre y apellido de quién retira el pedido.";
@@ -165,6 +174,7 @@ export function parsearCliente(payload: unknown) {
   const telefono = texto(customer?.phone);
   const documento = texto(customer?.taxId);
   const condicion = customer?.taxCondition;
+  const domicilio = texto(customer?.billingAddress);
   const retiroNombre = texto(customer?.pickupFirstName);
   const retiroApellido = texto(customer?.pickupLastName);
   const retiroDni = texto(customer?.pickupDni);
@@ -176,6 +186,7 @@ export function parsearCliente(payload: unknown) {
     telefono,
     documento,
     condicion,
+    domicilio,
     retiroNombre,
     retiroApellido,
     retiroDni,
@@ -202,6 +213,7 @@ export function parsearCliente(payload: unknown) {
       customerPhone: telefono ?? CLIENTE_SIN_IDENTIFICAR.customerPhone,
       customerTaxId: taxId,
       customerTaxCondition: esCondicionIva(condicion) ? condicion : null,
+      customerBillingAddress: domicilio,
       pickupFirstName: retiroNombre,
       pickupLastName: retiroApellido,
       pickupDni,

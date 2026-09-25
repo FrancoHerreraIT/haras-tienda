@@ -66,6 +66,8 @@ export type OrderRow = {
   customerTaxId: string | null;
   /** Clave de TAX_CONDITIONS. Null en pedidos viejos. */
   customerTaxCondition: string | null;
+  /** Domicilio para la factura. Null en pedidos viejos. */
+  customerBillingAddress: string | null;
   pickupFirstName: string | null;
   pickupLastName: string | null;
   pickupDni: string | null;
@@ -101,9 +103,17 @@ function formatDocumento(digitos: string) {
 }
 
 /** Un dato del detalle: etiqueta chica arriba, valor abajo. */
-function Dato({ label, children }: { label: string; children: React.ReactNode }) {
+function Dato({
+  label,
+  className = "",
+  children,
+}: {
+  label: string;
+  className?: string;
+  children: React.ReactNode;
+}) {
   return (
-    <div className="min-w-0">
+    <div className={`min-w-0 ${className}`}>
       <dt className="text-[11px] font-semibold tracking-wide text-stone-400">
         {label}
       </dt>
@@ -578,6 +588,14 @@ export default function OrderTable({ rows }: { rows: OrderRow[] }) {
                   </Dato>
                   <Dato label="Condición frente al IVA">
                     {condicionIva ?? (
+                      <span className="text-stone-400">Sin cargar</span>
+                    )}
+                  </Dato>
+                  <Dato
+                    label="Domicilio de facturación"
+                    className="sm:col-span-2"
+                  >
+                    {detail.customerBillingAddress ?? (
                       <span className="text-stone-400">Sin cargar</span>
                     )}
                   </Dato>

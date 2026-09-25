@@ -155,8 +155,9 @@ export function retiroDelComprador(
  * `taxCondition`, contacto) y quien retira (`pickup*`). Si retira el mismo
  * comprador, el formulario completa los `pickup*` con `retiroDelComprador`.
  *
- * No hay direccion: la tienda no despacha a domicilio, el cliente elige en
- * que sucursal retira (`pickupBranch`).
+ * No hay direccion de entrega: la tienda no despacha a domicilio, el cliente
+ * elige en que sucursal retira (`pickupBranch`). `billingAddress` es solo el
+ * domicilio que sale en la factura.
  */
 export interface CheckoutCustomer {
   /** Nombre y apellido, o razon social: como sale en la factura. */
@@ -166,6 +167,8 @@ export interface CheckoutCustomer {
   /** DNI o CUIT de facturacion. Tambien va al antifraude de MP. */
   taxId?: string;
   taxCondition?: TaxCondition;
+  /** Domicilio de facturacion, texto libre ("Av. Colon 123, Cordoba"). */
+  billingAddress?: string;
   pickupFirstName?: string;
   pickupLastName?: string;
   /** DNI de quien retira: lo presenta en la sucursal. */

@@ -20,6 +20,7 @@ export default async function PedidosPage() {
     customerPhone: order.customerPhone,
     customerTaxId: order.customerTaxId,
     customerTaxCondition: order.customerTaxCondition,
+    customerBillingAddress: order.customerBillingAddress,
     pickupFirstName: order.pickupFirstName,
     pickupLastName: order.pickupLastName,
     pickupDni: order.pickupDni,

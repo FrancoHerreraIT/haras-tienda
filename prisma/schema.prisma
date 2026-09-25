@@ -67,6 +67,9 @@ model Order {
   customerTaxId        String?
   /// Condicion frente al IVA: una clave de TAX_CONDITIONS (lib/checkout.ts).
   customerTaxCondition String?
+  /// Domicilio fiscal tal como lo escribe el comprador, para la factura.
+  /// No es de entrega: la tienda no despacha, se retira por sucursal.
+  customerBillingAddress String?
 
   /// Quien pasa a buscar el pedido por la sucursal. Puede no ser el
   /// comprador (una empresa que manda a un empleado, un regalo): por eso va
@@ -80,7 +83,8 @@ model Order {
   mpPreferenceId  String?          @unique
 
   /// Sucursal donde el cliente retira el pedido. No se hacen envios a
-  /// domicilio: por eso el Order no tiene direccion.
+  /// domicilio: por eso el Order no tiene direccion de entrega (la de
+  /// customerBillingAddress es solo para la factura).
   ///
   /// Guarda el id de PICKUP_BRANCHES (src/app/lib/branches.ts), no el nombre
   /// visible: renombrar "Homa Mall" en la vidriera no tiene que reescribir
