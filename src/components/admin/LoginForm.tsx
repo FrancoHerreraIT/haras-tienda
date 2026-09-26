@@ -26,7 +26,13 @@ export default function LoginForm() {
     });
 
     if (!result || result.error || !result.ok) {
-      setError("Email o contrasena incorrectos.");
+      /* El string va literal y no importado de @/auth: ese modulo toca
+         Prisma y no puede entrar al bundle del navegador. */
+      setError(
+        result?.code === "demasiados_intentos"
+          ? "Demasiados intentos seguidos. Esperá 15 minutos y probá de nuevo."
+          : "Email o contrasena incorrectos.",
+      );
       setLoading(false);
       return;
     }

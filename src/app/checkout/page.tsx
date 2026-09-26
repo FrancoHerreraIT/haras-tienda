@@ -20,6 +20,8 @@ import {
   cartItemsToCheckoutLines,
   errorDocumentoFacturacion,
   esDni,
+  esEmail,
+  esTelefono,
   normalizarDocumento,
   retiroDelComprador,
   type CheckoutCustomer,
@@ -142,10 +144,6 @@ const DATOS_VACIOS: DatosComprador = {
 
 /** Ancla del bloque de sucursales, para enfocarlo cuando falta elegir una. */
 const ID_SUCURSAL = "sucursal";
-
-/* Chequeo de forma, no de existencia: que tenga algo, un @ y un punto. Si el
-   mail no existe nos enteramos igual cuando rebote el aviso del pedido. */
-const EMAIL_VALIDO = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /**
  * Quien retira, segun el checkbox: los datos de facturacion si retira el
@@ -290,12 +288,14 @@ export default function CheckoutPage() {
 
     if (datos.email.trim() === "") {
       nuevos.email = "Ingresá tu email.";
-    } else if (!EMAIL_VALIDO.test(datos.email.trim())) {
+    } else if (!esEmail(datos.email.trim())) {
       nuevos.email = "Revisá el email: no parece una dirección válida.";
     }
 
     if (datos.telefono.trim() === "") {
       nuevos.telefono = "Ingresá un teléfono de contacto.";
+    } else if (!esTelefono(datos.telefono.trim())) {
+      nuevos.telefono = "Revisá el teléfono: solo números, con o sin código de área.";
     }
 
     const retiro = datosDeRetiro(datos, retiroPersonal);

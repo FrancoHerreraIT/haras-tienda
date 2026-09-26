@@ -15,11 +15,14 @@ import {
   errorDocumentoFacturacion,
   esCondicionIva,
   esDni,
+  esEmail,
+  esTelefono,
   normalizarDocumento,
   type CheckoutLine,
 } from "@/app/lib/checkout";
 import { CLIENTE_SIN_IDENTIFICAR } from "@/app/lib/orders";
 import { buscarSucursal, type PickupBranch } from "@/app/lib/branches";
+import { superaLimite } from "@/app/lib/rateLimit";
 
 /** Linea pedida por el cliente, con la forma ya verificada en runtime. */
 export type LineaPedida = CheckoutLine;
@@ -121,7 +124,15 @@ function errorDatosCliente(datos: {
 }): string | null {
   if (!datos.nombre) return "Ingresá el nombre y apellido o la razón social.";
   if (!datos.email) return "Ingresá tu email.";
+  /* Una sola direccion: a este mail le escribe la casilla de la tienda, y
+     una lista separada por comas la convertiria en un relay de spam. */
+  if (!esEmail(datos.email)) {
+    return "Revisá el email: no parece una dirección válida.";
+  }
   if (!datos.telefono) return "Ingresá un teléfono de contacto.";
+  if (!esTelefono(datos.telefono)) {
+    return "Revisá el teléfono: solo números, con o sin código de área.";
+  }
 
   if (!esCondicionIva(datos.condicion)) {
     return "Elegí tu condición frente al IVA.";
@@ -308,6 +319,33 @@ export async function resolverLineas(
   }
 
   return resueltas;
+}
+
+/** Mensaje para quien crea pedidos mas rapido de lo que compra una persona. */
+export const ERROR_DEMASIADOS_PEDIDOS =
+  "Registramos varios pedidos seguidos desde tu conexión. Esperá unos minutos y volvé a intentar.";
+
+/**
+ * Si hay que frenar la creacion de un pedido por exceso de intentos.
+ *
+ * Cada pedido escribe en la base y, por transferencia, manda un mail desde la
+ * casilla de la tienda al email que escribio el comprador. Sin tope, un bot
+ * llena el panel de pedidos falsos o usa la casilla para mandar spam hasta
+ * que Gmail la suspenda. Los topes dejan de sobra lugar a una persona que se
+ * equivoca y reintenta:
+ *  - por IP: 10 pedidos cada 15 minutos;
+ *  - por email: 5 pedidos por hora, para que nadie pueda llenarle la bandeja
+ *    a un tercero con avisos de la tienda.
+ */
+export async function superaLimiteDePedidos(
+  ip: string,
+  email: string | null,
+): Promise<boolean> {
+  if (await superaLimite(`pedido:ip:${ip}`, 10, 15 * 60)) return true;
+
+  return email
+    ? superaLimite(`pedido:email:${email.toLowerCase()}`, 5, 60 * 60)
+    : false;
 }
 
 /** Total del pedido en centavos. */

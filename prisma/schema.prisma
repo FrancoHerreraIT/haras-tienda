@@ -139,3 +139,13 @@ model OrderStatusLog {
   orderId     String
   order       Order    @relation(fields: [orderId], references: [id])
 }
+/// Contador de intentos por ventana de tiempo (lib/rateLimit.ts).
+///
+/// Vive en la base y no en memoria porque en Vercel cada request puede caer
+/// en una instancia distinta: un contador en memoria se reinicia solo y no
+/// frena a nadie. `key` dice que se cuenta y de quien ("login:ip:1.2.3.4").
+model RateLimit {
+  key         String   @id
+  count       Int      @default(0)
+  windowStart DateTime @default(now())
+}

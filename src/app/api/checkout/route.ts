@@ -29,15 +29,18 @@ import {
   type CheckoutResponse,
 } from "@/app/lib/checkout";
 import {
+  ERROR_DEMASIADOS_PEDIDOS,
   parsearCliente,
   parsearLineas,
   resolverLineas,
+  superaLimiteDePedidos,
   totalEnCentavos,
   type LineaResuelta,
 } from "@/app/lib/checkoutServer";
 import { ESTADO_CANCELADO, ESTADO_PENDIENTE } from "@/app/lib/orders";
 import { METODO_MERCADOPAGO } from "@/app/lib/paymentConfig";
 import { nombreSucursal } from "@/app/lib/branches";
+import { ipDelCliente } from "@/app/lib/rateLimit";
 
 /* Usa el access token y escribe en la base: nunca puede quedar cacheado. */
 export const dynamic = "force-dynamic";
@@ -99,6 +102,17 @@ export async function POST(request: Request) {
      entrega. El formulario ya la exige; esto cubre el POST directo. */
   if (!cliente.sucursal) {
     return error("Elegí la sucursal donde vas a retirar el pedido.", 400);
+  }
+
+  /* Recien aca, con todo validado: un formulario mal cargado no gasta
+     intentos, solo los pedidos que de verdad se iban a crear. */
+  if (
+    await superaLimiteDePedidos(
+      ipDelCliente(request.headers),
+      cliente.orden.customerEmail,
+    )
+  ) {
+    return error(ERROR_DEMASIADOS_PEDIDOS, 429);
   }
 
   let orden: { id: string };

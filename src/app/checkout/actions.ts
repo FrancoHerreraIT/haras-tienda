@@ -30,11 +30,15 @@
  *  3. Primero la orden, despues el aviso: si el mail falla, el pedido ya esta
  *     guardado y el comprador ve el alias en pantalla igual.
  */
+import { headers } from "next/headers";
+
 import { prisma } from "@/app/lib/prisma";
 import {
+  ERROR_DEMASIADOS_PEDIDOS,
   parsearCliente,
   parsearLineas,
   resolverLineas,
+  superaLimiteDePedidos,
   totalEnCentavos,
   type LineaResuelta,
 } from "@/app/lib/checkoutServer";
@@ -48,6 +52,7 @@ import { nombreSucursal } from "@/app/lib/branches";
 import { enviarMail } from "@/app/lib/mail";
 import { formatearPesos } from "@/app/lib/orderEmail";
 import { armarMailTransferencia } from "@/app/lib/transferEmail";
+import { ipDelCliente } from "@/app/lib/rateLimit";
 import type { CheckoutCustomer, CheckoutLine } from "@/app/lib/checkout";
 
 export type ResultadoTransferencia =
@@ -96,6 +101,17 @@ export async function confirmarPedidoPorTransferencia(input: {
       ok: false,
       error: "Elegí la sucursal donde vas a retirar el pedido.",
     };
+  }
+
+  /* Este flujo manda un mail al email que escribio el comprador: sin tope,
+     la casilla de la tienda serviria para mandar spam (ver lib/rateLimit). */
+  if (
+    await superaLimiteDePedidos(
+      ipDelCliente(await headers()),
+      cliente.orden.customerEmail,
+    )
+  ) {
+    return { ok: false, error: ERROR_DEMASIADOS_PEDIDOS };
   }
 
   /* El descuento se aplica aca y no se lee del navegador: el resumen del

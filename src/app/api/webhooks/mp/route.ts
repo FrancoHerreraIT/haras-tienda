@@ -345,9 +345,15 @@ export async function POST(request: NextRequest) {
       return new Response(null, { status: 401 });
     }
   } else if (process.env.NODE_ENV === "production") {
-    console.warn(
-      "[webhook mp] MP_WEBHOOK_SECRET sin configurar: se procesan avisos sin verificar la firma.",
+    /* En produccion no se procesa nada sin firma: sin la clave no hay forma
+       de saber si el aviso vino de Mercado Pago. MP reintenta durante dias,
+       asi que los avisos rechazados mientras falte la variable se procesan
+       solos cuando se configure. Por eso es error y no warning: mientras
+       esto aparezca en el log, ningun pago se acredita solo. */
+    console.error(
+      "[webhook mp] MP_WEBHOOK_SECRET sin configurar: aviso rechazado. Cargala en las variables de entorno de Vercel.",
     );
+    return new Response(null, { status: 401 });
   }
 
   /* Todo lo que sigue se espera antes de responder a proposito: en serverless
@@ -401,18 +407,23 @@ export async function POST(request: NextRequest) {
       return ok();
     }
 
-    /* Aviso temprano de que el pago no es por lo que facturamos: no frena la
-       acreditacion (MP puede sumar costos de envio), pero si esto aparece sin
-       explicacion hay que mirarlo. */
+    /* El pago tiene que cubrir lo que facturamos, en pesos. La tienda no
+       suma envio ni recargos, asi que un pago aprobado por menos (o en otra
+       moneda) no es una venta normal: no se acredita ni se descuenta stock,
+       y queda anotado para que alguien lo mire en Mercado Pago. Por mas
+       tampoco deberia pasar, pero la plata alcanza: se acredita y se avisa. */
     const totalOrden = Number(orden.totalAmount);
+    const pagado = pago.transaction_amount;
+    const cubreElPedido =
+      pago.currency_id === "ARS" &&
+      pagado != null &&
+      pagado >= totalOrden - 0.01;
 
-    if (
-      pago.transaction_amount != null &&
-      Math.abs(pago.transaction_amount - totalOrden) > 0.01
-    ) {
+    if (pagado != null && Math.abs(pagado - totalOrden) > 0.01) {
       console.warn("[webhook mp] el monto pagado no coincide con el pedido", {
         orderId: orden.id,
-        pagado: pago.transaction_amount,
+        pagado,
+        moneda: pago.currency_id,
         esperado: totalOrden,
       });
     }
@@ -465,6 +476,34 @@ export async function POST(request: NextRequest) {
     }
 
     /* ---------- 5. Acreditacion o cambio de estado ---------- */
+    if (nuevoEstado === ESTADO_PAGADO && !cubreElPedido) {
+      const nota =
+        `Mercado Pago aprobó un pago de ${pagado ?? "?"} ${pago.currency_id ?? ""} ` +
+        `pero el pedido es de ${totalOrden.toFixed(2)} ARS: NO se acreditó ni se descontó stock. ` +
+        `Revisar en Mercado Pago. ${referenciaDelPago(pago)}`;
+
+      /* MP repite los avisos: la nota se escribe una sola vez. */
+      const yaAnotado = await prisma.orderStatusLog.findFirst({
+        where: { orderId: orden.id, notes: nota },
+        select: { id: true },
+      });
+
+      if (!yaAnotado) {
+        await prisma.orderStatusLog.create({
+          data: { orderId: orden.id, status: orden.status, notes: nota },
+        });
+      }
+
+      console.error("[webhook mp] pago aprobado que no cubre el pedido", {
+        orderId: orden.id,
+        pagado,
+        moneda: pago.currency_id,
+        esperado: totalOrden,
+      });
+
+      return ok();
+    }
+
     if (nuevoEstado === ESTADO_PAGADO) {
       const resultado = await acreditarPedido(orden, pago);
 
@@ -490,6 +529,26 @@ export async function POST(request: NextRequest) {
       console.info("[webhook mp] pedido acreditado", {
         orderId: orden.id,
         resultado,
+      });
+
+      return ok();
+    }
+
+    if (
+      nuevoEstado === ESTADO_CANCELADO &&
+      esEstadoCobrado(orden.status) &&
+      pago.status !== "refunded" &&
+      pago.status !== "charged_back"
+    ) {
+      /* Un rechazo sobre un pedido ya cobrado no revierte nada: es otro
+         intento de pago de la misma preferencia (la tarjeta que fallo antes
+         de la que funciono), cuyo aviso llego tarde o repetido. Si se tomara
+         como reversion, un pedido pagado quedaria cancelado. Solo una
+         devolucion o un contracargo le sacan la plata a un pedido cobrado. */
+      console.info("[webhook mp] rechazo de otro intento sobre un pedido cobrado, se ignora", {
+        orderId: orden.id,
+        paymentId: pago.id,
+        status: pago.status,
       });
 
       return ok();

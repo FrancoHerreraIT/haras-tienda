@@ -51,6 +51,36 @@ export function normalizarDocumento(valor: string): string | null {
 
 export const esDni = (digitos: string) => /^\d{7,8}$/.test(digitos);
 
+/* Caracteres que no van en una direccion simple y que nodemailer lee como
+   separadores o comentarios: con "a@x.com, b@y.com" el mail de la tienda le
+   llegaria a los dos, y un bot podria usar el checkout para mandar spam. */
+const FUERA_DE_EMAIL = `[^\\s@,;:<>()[\\]"'\\\\]`;
+const EMAIL_SIMPLE = new RegExp(
+  `^${FUERA_DE_EMAIL}+@${FUERA_DE_EMAIL}+\\.${FUERA_DE_EMAIL}{2,}$`,
+);
+
+/** Tope del RFC 5321 para una direccion completa. */
+export const MAX_EMAIL = 254;
+
+/**
+ * Una sola direccion de mail, sin listas ni nombres ("Juan <j@x.com>").
+ *
+ * Chequeo de forma, no de existencia: si el mail no existe nos enteramos
+ * cuando rebote el aviso del pedido.
+ */
+export const esEmail = (valor: string): boolean =>
+  valor.length <= MAX_EMAIL && EMAIL_SIMPLE.test(valor);
+
+/**
+ * Un telefono razonable: digitos con los separadores de siempre (espacios,
+ * guiones, puntos, parentesis y el + internacional), entre 6 y 15 digitos.
+ */
+export function esTelefono(valor: string): boolean {
+  if (valor.length > 30 || !/^[\d\s().+-]+$/.test(valor)) return false;
+  const digitos = valor.replace(/\D/g, "").length;
+  return digitos >= 6 && digitos <= 15;
+}
+
 /** CUIT/CUIL de 11 digitos con el digito verificador de AFIP (modulo 11). */
 export function esCuit(digitos: string): boolean {
   if (!/^\d{11}$/.test(digitos)) return false;
