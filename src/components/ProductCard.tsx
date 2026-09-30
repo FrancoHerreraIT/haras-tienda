@@ -149,10 +149,9 @@ export default function ProductCard({ product }: ProductCardProps) {
       </div>
 
       <div className="flex-1 flex flex-col">
-        <span className="text-[11px] text-amber-800/80 font-semibold tracking-wide">
-          {product.categoryName}
-        </span>
-        <h3 className="text-[14px] sm:text-[15px] leading-snug mt-1.5 mb-3 sm:mb-4 line-clamp-2 min-h-[2.6em]">
+        {/* El nombre manda y el rubro va debajo, chico y apagado: con el rubro
+            arriba en cuero y semibold se leia como el titulo de la tarjeta. */}
+        <h3 className="text-[14px] sm:text-[16px] font-medium leading-snug line-clamp-2 min-h-[2.75em]">
           <Link
             href={ficha}
             className="text-stone-800 transition-colors hover:text-amber-800"
@@ -160,6 +159,9 @@ export default function ProductCard({ product }: ProductCardProps) {
             {product.title}
           </Link>
         </h3>
+        <span className="mt-1 mb-3 sm:mb-4 truncate text-[12px] text-stone-500">
+          {product.categoryName}
+        </span>
 
         <div className="mt-auto">
           <p className="font-[family-name:var(--font-display)] text-[20px] sm:text-[24px] text-stone-900">

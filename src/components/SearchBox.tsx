@@ -249,10 +249,11 @@ export default function SearchBox({
                         )}
                       </span>
                       <span className="min-w-0 flex-1">
-                        <span className="block truncate text-sm text-stone-800">
+                        {/* En px: `text-sm` con el rem al 67% cae a ~9px. */}
+                        <span className="line-clamp-2 text-[14px] font-medium leading-snug text-stone-800 sm:text-[15px]">
                           {producto.title}
                         </span>
-                        <span className="block truncate text-[11px] font-semibold tracking-wide text-amber-800/80">
+                        <span className="mt-0.5 block truncate text-[12px] text-stone-500">
                           {producto.categoryName}
                         </span>
                       </span>

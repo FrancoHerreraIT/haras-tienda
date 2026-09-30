@@ -91,12 +91,14 @@ export default async function ProductoPage({
           <ProductGallery images={product.images} title={product.title} />
 
           <div className="lg:pt-2">
-            <span className="text-[11px] font-semibold tracking-wide text-amber-800/80">
-              {product.categoryName}
-            </span>
-            <h1 className="mt-2 font-[family-name:var(--font-display)] text-2xl leading-tight text-stone-900 sm:text-3xl md:text-4xl">
+            {/* Nombre primero y rubro debajo, apagado. El nombre va completo
+                (sin line-clamp): la ficha es donde se lee entero. */}
+            <h1 className="font-[family-name:var(--font-display)] text-[22px] leading-tight text-stone-900 sm:text-[24px] md:text-[28px]">
               {product.title}
             </h1>
+            <p className="mt-1.5 text-[13px] text-stone-500">
+              {product.categoryName}
+            </p>
 
             <p className="mt-5 font-[family-name:var(--font-display)] text-3xl text-stone-900 md:text-4xl">
               $ {product.price.toLocaleString("es-AR")}

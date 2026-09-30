@@ -109,12 +109,12 @@ export default function CartDrawer() {
                   </div>
 
                   <div className="flex-1 min-w-0">
-                    <span className="text-[10px] text-stone-400 font-bold tracking-wide">
-                      {item.categoryName}
-                    </span>
-                    <h4 className="text-sm font-medium text-stone-800 leading-snug line-clamp-2 mb-2">
+                    <h4 className="text-[14px] font-medium text-stone-800 leading-snug line-clamp-2">
                       {item.title}
                     </h4>
+                    <span className="mt-0.5 mb-2 block truncate text-[12px] text-stone-500">
+                      {item.categoryName}
+                    </span>
 
                     <div className="flex items-center justify-between">
                       {/* Area tocable de 40px: con 24px era muy dificil
