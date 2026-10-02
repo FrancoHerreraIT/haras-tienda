@@ -1,36 +1,61 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Haras del Este
 
-## Getting Started
+E-commerce de **Haras del Este**: catálogo con control de stock, pagos online y facturación adaptada a AFIP.
 
-First, run the development server:
+🌐 [www.harasdeleste.com.ar](https://www.harasdeleste.com.ar)
+
+# Stack
+
+- Next.js
+- Node.js 24.x
+- PostgreSQL + Prisma
+- Nodemailer
+- Vercel
+
+# Características
+
+- **Catálogo:** productos individuales y combos, con búsqueda y categorías.
+- **Stock:** cada ingreso y salida queda registrado en `StockMovement`; se descuenta o repone solo ante ventas, devoluciones y contracargos.
+- **Pagos:**
+  - Mercado Pago, con webhooks verificados por firma HMAC.
+  - Transferencia bancaria, con email automático de datos y aprobación manual desde el panel.
+- **Checkout AFIP:** pide DNI, CUIT/CUIL, nombre, domicilio y tipo de contribuyente.
+- **Seguridad:** rate limiting por IP y email, validación de inputs, headers de seguridad y sesiones de admin con vencimiento.
+- **Panel de administración:** gestión de productos y pedidos. Los admins se crean por terminal, sin registro público.
+
+# Instalación
 
 ```bash
+git clone https://github.com/FrancoHerreraIT/haras-tienda.git
+cd haras-tienda
+npm install
+cp .env.example .env   # completar variables
+npx prisma migrate dev
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+La app queda en http://localhost:3000.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+# Variables de entorno
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Principales (ver `.env.example` para la lista completa):
 
-## Learn More
+- `DATABASE_URL`: conexión a PostgreSQL
+- `MP_WEBHOOK_SECRET`: firma de webhooks de Mercado Pago
 
-To learn more about Next.js, take a look at the following resources:
+# Administración
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Crear un usuario admin:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npm run admin:create -- "email@dominio.com" "Contraseña" "Nombre"
+```
 
-## Deploy on Vercel
+# Migraciones y deploy
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+npx prisma migrate dev --name cambio   # crear y probar en local
+npx prisma migrate deploy              # aplicar en producción
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+El deploy se hace en Vercel con cada push a la rama principal.
