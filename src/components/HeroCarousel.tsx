@@ -2,9 +2,11 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { DESCUENTO_TRANSFERENCIA } from "@/app/lib/paymentConfig";
+import { RUTA_CATALOGO } from "@/app/lib/search";
 
 interface Slide {
   id: number;
@@ -12,6 +14,8 @@ interface Slide {
   title: string;
   subtitle: string;
   cta: string;
+  /* A donde lleva el boton del slide. */
+  href: string;
   image: string;
   /* Que parte de la foto se prioriza al recortar en pantallas angostas. */
   position: string;
@@ -25,6 +29,7 @@ const slides: Slide[] = [
     subtitle:
       "Tablas, cuchillería y hierro forjado elegidos pieza por pieza para la mesa de campo.",
     cta: "Ver catálogo",
+    href: RUTA_CATALOGO,
     image: "/hero/haras1.jpg",
     position: "object-center",
   },
@@ -36,6 +41,7 @@ const slides: Slide[] = [
     title: `${DESCUENTO_TRANSFERENCIA}% de descuento`,
     subtitle: "Abonando tu compra con transferencia bancaria.",
     cta: "Ver catálogo",
+    href: RUTA_CATALOGO,
     image: "/hero/haras2.jpg",
     position: "object-center",
   },
@@ -141,23 +147,47 @@ export default function HeroCarousel() {
         {/* Contenido */}
         <div className="relative z-10 flex flex-col justify-center w-full px-5 sm:px-8 md:px-16 lg:px-20 pt-12 pb-16 sm:py-16 md:py-24">
           <div className="max-w-2xl">
-            <span className="inline-block text-[10px] sm:text-[11px] md:text-xs tracking-wide text-amber-500/90 mb-3 sm:mb-5">
-              {slides[active].eyebrow}
-            </span>
-            <h1 className="font-[family-name:var(--font-display)] text-[28px] sm:text-4xl md:text-6xl lg:text-7xl text-[#F7F5F0] leading-[1.12] md:leading-[1.08] mb-4 sm:mb-6 drop-shadow-[0_2px_12px_rgba(0,0,0,0.6)] text-balance">
-              {slides[active].title}
-            </h1>
-            <p className="text-sm md:text-lg text-stone-200/90 mb-7 sm:mb-9 max-w-lg leading-relaxed">
-              {slides[active].subtitle}
-            </p>
-            <button
-              type="button"
-              /* En el telefono el boton quedaba pegado al parrafo: se lo baja
-                 dentro del hero para que respire. En sm+ ya estaba bien. */
-              className="mt-8 sm:mt-0 w-full sm:w-auto bg-[#8B5A2B] hover:bg-[#6b4421] active:scale-[0.98] text-[#F7F5F0] font-semibold tracking-wide px-7 sm:px-9 py-4 rounded-lg text-xs md:text-sm transition-all shadow-lg shadow-black/30"
+            {/* Los textos de todos los slides van apilados en la misma celda
+                de la grilla y solo se ve el activo. La celda toma el alto del
+                texto mas largo, asi el boton de abajo queda siempre a la misma
+                altura: antes subia o bajaba segun el titulo ocupara una o dos
+                lineas. Cada texto va centrado dentro de la celda, igual que
+                cuando el bloque entero estaba centrado en el hero. */}
+            <div className="grid">
+              {slides.map((s, index) => {
+                const visible = index === active;
+                /* Un solo h1 en la pagina: los textos ocultos usan un div. */
+                const Titulo = visible ? "h1" : "div";
+                return (
+                  <div
+                    key={s.id}
+                    aria-hidden={!visible}
+                    className={`col-start-1 row-start-1 self-center ${
+                      visible ? "" : "invisible"
+                    }`}
+                  >
+                    <span className="inline-block text-[10px] sm:text-[11px] md:text-xs tracking-wide text-amber-500/90 mb-3 sm:mb-5">
+                      {s.eyebrow}
+                    </span>
+                    <Titulo className="font-[family-name:var(--font-display)] text-[28px] sm:text-4xl md:text-6xl lg:text-7xl text-[#F7F5F0] leading-[1.12] md:leading-[1.08] mb-4 sm:mb-6 drop-shadow-[0_2px_12px_rgba(0,0,0,0.6)] text-balance">
+                      {s.title}
+                    </Titulo>
+                    <p className="text-sm md:text-lg text-stone-200/90 mb-7 sm:mb-9 max-w-lg leading-relaxed">
+                      {s.subtitle}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+            {/* Era un <button> sin accion: no llevaba a ningun lado.
+                En el telefono el boton quedaba pegado al parrafo: se lo baja
+                dentro del hero para que respire. En sm+ ya estaba bien. */}
+            <Link
+              href={slides[active].href}
+              className="mt-8 sm:mt-0 flex w-full sm:inline-flex sm:w-auto items-center justify-center bg-[#8B5A2B] hover:bg-[#6b4421] active:scale-[0.98] text-[#F7F5F0] font-semibold tracking-wide px-7 sm:px-9 py-4 rounded-lg text-xs md:text-sm transition-all shadow-lg shadow-black/30"
             >
               {slides[active].cta}
-            </button>
+            </Link>
           </div>
 
           {/* Dots — el area tocable es de 44px aunque la marca sea fina.

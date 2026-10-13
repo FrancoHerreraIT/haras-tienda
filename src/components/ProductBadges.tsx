@@ -20,7 +20,10 @@ const ESTILOS: Record<Tipo, string> = {
 function Badge({ tipo, texto }: { tipo: Tipo; texto: string }) {
   return (
     <span
-      className={`inline-flex h-[22px] items-center gap-1 whitespace-nowrap rounded-full px-2.5 text-[11px] font-semibold leading-none tracking-wide ${ESTILOS[tipo]}`}
+      /* 22px de alto por padding + interlineado (5 + 12 + 5) y no con un
+         h fijo: la pildora toma el alto de su contenido y no puede quedar
+         recortada. ALTO_BADGE tiene que coincidir. */
+      className={`inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-[5px] text-[11px] font-semibold leading-[12px] tracking-wide ${ESTILOS[tipo]}`}
     >
       {tipo === "destacado" && (
         <Star className="h-3 w-3 shrink-0 fill-current" aria-hidden="true" />
@@ -29,6 +32,9 @@ function Badge({ tipo, texto }: { tipo: Tipo; texto: string }) {
     </span>
   );
 }
+
+/** Alto de una pildora: la fila que reserva su lugar usa este minimo. */
+export const ALTO_BADGE = "min-h-[22px]";
 
 type ProductBadgesProps = {
   stock: number;
@@ -48,7 +54,7 @@ export default function ProductBadges({
   /* Sin etiquetas igual se dibuja el contenedor: quien lo usa le da un alto
      minimo para que la tarjeta no cambie de alto por tener o no etiqueta. */
   return (
-    <div className={`flex flex-wrap items-center gap-1.5 ${className}`}>
+    <div className={`flex shrink-0 flex-wrap items-center gap-1.5 ${className}`}>
       {destacado && <Badge tipo="destacado" texto="Destacado" />}
       {stockBajo && <Badge tipo="stockBajo" texto={etiquetaStockBajo(stock)} />}
       {agotado && <Badge tipo="agotado" texto="Sin stock" />}

@@ -4,22 +4,15 @@ import { Suspense, useEffect, useId, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronDown, Search, ShoppingCart, X } from "lucide-react";
-import { Great_Vibes } from "next/font/google";
 import { useCartStore } from "@/store/useCartStore";
 import AdminShortcut from "@/components/AdminShortcut";
+import BrandLogo from "@/components/BrandLogo";
 import CategoryMenu from "@/components/CategoryMenu";
 import SearchBox from "@/components/SearchBox";
 import { useHydrated } from "@/app/lib/useHydrated";
 import { contar } from "@/app/lib/plural";
 import { RUTA_CATALOGO, hrefCategoria, normalizar } from "@/app/lib/search";
 import type { StoreCategory } from "@/app/lib/storeData";
-
-/* Firma de estancia para el logo */
-const greatVibes = Great_Vibes({
-  subsets: ["latin"],
-  weight: "400",
-  display: "swap",
-});
 
 /* "Inicio" va aparte de la lista porque abre la fila en las dos pantallas y
    no comparte el `listo` de los demas: la home siempre existe. */
@@ -155,25 +148,9 @@ export default function Navbar({ categories }: NavbarProps) {
       {/* Franja superior: negro forja */}
       <div className="bg-[#1C1A19] text-stone-100 border-b border-white/5">
         <div className="w-full px-4 md:px-12 lg:px-24 xl:px-32 py-3.5 md:py-5 flex items-center justify-between gap-3 md:gap-6">
-          {/* Logo — firma de estancia.
-              La bajada va centrada bajo la firma: la H de Great Vibes abre con
-              un rulo hacia la izquierda, y alineadas las dos a la izquierda la
-              bajada se veia corrida.
-              Sin truncate: su overflow hidden cortaba los trazos de la cursiva
-              que salen de la caja, como el remate de la ultima "e". El px-1
-              les deja lugar a esos trazos. */}
-          <Link
-            href="/"
-            className="group flex shrink-0 flex-col items-center leading-none"
-          >
-            <span
-              className={`${greatVibes.className} block whitespace-nowrap px-1 text-[1.75rem] sm:text-[2.125rem] md:text-[2.75rem] text-stone-50 group-hover:text-amber-100 transition-colors leading-[1.15]`}
-            >
-              Haras del Este
-            </span>
-            <span className="mt-1 block whitespace-nowrap text-[8px] sm:text-[9px] md:text-[11px] tracking-wide text-amber-700/90">
-              Cocina · Campo · Hogar
-            </span>
+          {/* Logo — firma de estancia (compartido con el Footer) */}
+          <Link href="/" className="group flex shrink-0">
+            <BrandLogo />
           </Link>
 
           {/* Buscador central (desktop) */}

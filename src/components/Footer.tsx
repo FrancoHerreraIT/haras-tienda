@@ -1,22 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowUp, Mail, MapPin, MessageCircle } from "lucide-react";
-import { Great_Vibes } from "next/font/google";
+import { ArrowUp, Leaf, Mail, MapPin, MessageCircle } from "lucide-react";
 
 /* Las mismas sucursales que ofrece el checkout para retirar. */
 import { PICKUP_BRANCHES } from "@/app/lib/branches";
 /* Y los mismos datos de contacto que muestra /contacto. */
 import { STORE_CONTACT } from "@/app/lib/contacto";
 import InstagramGlyph from "@/components/InstagramGlyph";
-
-/* Misma firma de estancia que usa el Navbar */
-const greatVibes = Great_Vibes({
-  subsets: ["latin"],
-  weight: "400",
-  display: "swap",
-});
-
+import BrandLogo from "@/components/BrandLogo";
 
 export default function Footer() {
   const scrollToTop = () =>
@@ -29,19 +21,21 @@ export default function Footer() {
 
       <div className="w-full px-4 md:px-12 lg:px-24 xl:px-32 py-12 md:py-20 pb-safe">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 md:gap-10 lg:gap-16">
-          {/* Columna 1 — Marca */}
-          <div>
-            <span
-              className={`${greatVibes.className} block text-4xl md:text-5xl text-stone-50 leading-[1.1]`}
-            >
-              Haras del Este
-            </span>
-            <span className="block text-[10px] tracking-wide text-amber-700 mt-3 pl-1">
-              Cocina • Campo • Hogar
-            </span>
-            <p className="text-sm text-stone-400 leading-relaxed mt-6 max-w-xs">
-              Tablas, cuchillería y hierro forjado elegidos pieza por pieza para
-              la mesa de campo.
+          {/* Columna 1 — Marca. El mismo logo que el Navbar, mas grande. En
+              el telefono el bloque va centrado; desde sm se alinea con las
+              otras columnas. La hoja cierra la frase en linea con el texto (y no como un
+              item flex aparte) para que la acompane tambien cuando esta
+              centrada y ocupa dos renglones. */}
+          <div className="flex flex-col items-center text-center sm:items-start sm:text-left">
+            <BrandLogo size="footer" />
+            <p className="mt-6 max-w-xs text-[14px] leading-relaxed text-stone-400">
+              El equilibrio entre delicados diseños y el espíritu de lo
+              autóctono
+              <Leaf
+                className="ml-1.5 inline-block h-[14px] w-[14px] -translate-y-px align-middle text-amber-700"
+                strokeWidth={1.75}
+                aria-hidden="true"
+              />
             </p>
           </div>
 
