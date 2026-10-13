@@ -19,6 +19,7 @@ import {
   NOMBRE_FORMATO,
   type ImageFormat,
 } from "@/lib/imageType";
+import { contar, plural } from "@/app/lib/plural";
 
 /* Tope del plan de Cloudinary para imagenes. El archivo ya no pasa por
    nuestro servidor, asi que el limite lo pone Cloudinary y no el hosting. */
@@ -132,7 +133,7 @@ export default function ProductImagesField({
           try {
             payload = JSON.parse(xhr.responseText);
           } catch {
-            reject(new Error("Cloudinary devolvio una respuesta ilegible."));
+            reject(new Error("Cloudinary devolvió una respuesta ilegible."));
             return;
           }
           if (xhr.status >= 200 && xhr.status < 300 && payload.secure_url) {
@@ -165,13 +166,13 @@ export default function ProductImagesField({
 
     const lugar = MAX_FOTOS - urls.length;
     if (lugar <= 0) {
-      setError(`Ya tenes ${MAX_FOTOS} fotos, que es el maximo.`);
+      setError(`Ya tenés ${MAX_FOTOS} fotos, que es el máximo.`);
       return;
     }
 
     const archivos = elegidos.slice(0, lugar);
     if (elegidos.length > lugar) {
-      setError(`Solo entran ${lugar} foto(s) mas: se toman las primeras.`);
+      setError(`Solo ${plural(lugar, "entra", "entran")} ${contar(lugar, "foto")} más: se toman las primeras.`);
     }
 
     setTotal(archivos.length);
@@ -298,7 +299,7 @@ export default function ProductImagesField({
                       type="button"
                       onClick={() => mover(indice, indice + 1)}
                       disabled={indice === urls.length - 1 || ocupado}
-                      aria-label={`Mover la foto ${indice + 1} hacia atras`}
+                      aria-label={`Mover la foto ${indice + 1} hacia atrás`}
                       className="flex h-8 w-8 items-center justify-center rounded text-stone-400 transition-colors hover:bg-stone-100 hover:text-stone-700 disabled:opacity-30"
                     >
                       <ChevronRight className="h-4 w-4" />
@@ -346,7 +347,7 @@ export default function ProductImagesField({
               ? `Subiendo ${subiendo} de ${total}...`
               : urls.length === 0
                 ? "Elegir fotos"
-                : "Agregar mas"}
+                : "Agregar más"}
           </button>
 
           <span className="text-xs text-stone-400">
@@ -377,7 +378,7 @@ export default function ProductImagesField({
 
         {!ocupado && (
           <p className="mt-2 text-xs text-stone-400">
-            Podes elegir varias a la vez. JPG, PNG, WEBP, AVIF o HEIC de iPhone,
+            Podés elegir varias a la vez. JPG, PNG, WEBP, AVIF o HEIC de iPhone,
             hasta 10 MB cada una. La primera es la portada.
           </p>
         )}
@@ -385,7 +386,7 @@ export default function ProductImagesField({
         {convertidas.length > 0 && !ocupado && (
           <p className="mt-1.5 text-xs font-medium text-emerald-700">
             Foto {convertidas.map((f) => NOMBRE_FORMATO[f]).join(" y ")}{" "}
-            convertida automaticamente a un formato que se ve en todos los
+            convertida automáticamente a un formato que se ve en todos los
             navegadores.
           </p>
         )}

@@ -4,6 +4,15 @@ import { useRef, useState } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, Package } from "lucide-react";
 
+/* Marco de la foto principal. 4/5 porque las fotos se sacan en vertical con
+   el celular. El tope de alto evita que una foto vertical ocupe mas que la
+   pantalla: en el telefono deja asomar la info de abajo, y en desktop entra
+   entera junto al nombre, el precio y el boton (lo que se resta es el Navbar
+   y las migas). Al topearse el marco queda mas ancho que 4/5; la foto va con
+   object-contain, asi que solo crece el blanco de los costados. */
+const MARCO =
+  "aspect-[4/5] w-full max-h-[60svh] lg:max-h-[calc(100dvh-240px)] lg:min-h-[420px] overflow-hidden rounded-xl border border-stone-200 bg-white";
+
 /**
  * Galeria de la ficha de producto.
  *
@@ -23,7 +32,7 @@ export default function ProductGallery({
 
   if (images.length === 0) {
     return (
-      <div className="flex aspect-square w-full items-center justify-center rounded-xl border border-stone-200 bg-white">
+      <div className={`flex items-center justify-center ${MARCO}`}>
         <Package className="h-16 w-16 text-stone-300" strokeWidth={1} />
       </div>
     );
@@ -35,7 +44,7 @@ export default function ProductGallery({
   return (
     <div>
       <div
-        className="relative aspect-square w-full overflow-hidden rounded-xl border border-stone-200 bg-white"
+        className={`relative ${MARCO}`}
         onTouchStart={(e) => {
           inicioX.current = e.touches[0].clientX;
           inicioY.current = e.touches[0].clientY;

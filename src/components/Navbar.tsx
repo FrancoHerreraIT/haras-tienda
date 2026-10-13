@@ -10,6 +10,7 @@ import AdminShortcut from "@/components/AdminShortcut";
 import CategoryMenu from "@/components/CategoryMenu";
 import SearchBox from "@/components/SearchBox";
 import { useHydrated } from "@/app/lib/useHydrated";
+import { contar } from "@/app/lib/plural";
 import { RUTA_CATALOGO, hrefCategoria, normalizar } from "@/app/lib/search";
 import type { StoreCategory } from "@/app/lib/storeData";
 
@@ -213,7 +214,7 @@ export default function Navbar({ categories }: NavbarProps) {
               onClick={openCart}
               aria-label={
                 mounted && totalItems > 0
-                  ? `Abrir carrito, ${totalItems} producto(s)`
+                  ? `Abrir carrito, ${contar(totalItems, "producto")}`
                   : "Abrir carrito"
               }
               className="relative flex h-11 w-11 md:h-12 md:w-12 items-center justify-center text-stone-100 hover:text-amber-600 transition-colors"

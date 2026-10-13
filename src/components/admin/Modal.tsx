@@ -153,7 +153,7 @@ export default function Modal({
             "Volver", que en mobile es el ultimo por el flex-col-reverse,
             terminaba pegado al canto del panel. */}
         {footer && (
-          <footer className="flex shrink-0 flex-col-reverse gap-3 border-t border-stone-200 bg-stone-100/60 px-5 pt-4 pb-[calc(2rem_+_env(safe-area-inset-bottom,0px))] sm:flex-row sm:justify-end sm:px-8 sm:pt-5 sm:pb-[calc(1.25rem_+_env(safe-area-inset-bottom,0px))]">
+          <footer className="flex shrink-0 flex-col-reverse gap-3 border-t border-stone-200 bg-stone-100/60 px-5 pt-4 pb-[calc(2rem_+_env(safe-area-inset-bottom,0px))] sm:flex-row sm:flex-wrap sm:justify-end sm:px-8 sm:pt-5 sm:pb-[calc(1.25rem_+_env(safe-area-inset-bottom,0px))]">
             {footer}
           </footer>
         )}

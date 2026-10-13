@@ -2,17 +2,25 @@
 
 import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { ChevronDown, PackageSearch, SearchX, X } from "lucide-react";
+import { PackageSearch, SearchX, X } from "lucide-react";
 import ProductCard from "./ProductCard";
+import SortDropdown, { type SortDropdownOption } from "./SortDropdown";
 import {
   SEARCH_PARAM,
   TODAS_LAS_CATEGORIAS,
   filtrarProductos,
 } from "@/app/lib/search";
 import { useCategoryNav } from "@/app/lib/useCategoryNav";
+import { contar } from "@/app/lib/plural";
 import type { StoreCategory, StoreProduct } from "@/app/lib/storeData";
 
 type SortOption = "destacados" | "menor-precio" | "mayor-precio";
+
+const SORT_OPTIONS: readonly SortDropdownOption<SortOption>[] = [
+  { value: "destacados", label: "Destacados" },
+  { value: "menor-precio", label: "Menor precio" },
+  { value: "mayor-precio", label: "Mayor precio" },
+];
 
 type ProductGridProps = {
   products: StoreProduct[];
@@ -188,29 +196,16 @@ export default function ProductGrid({ products, categories }: ProductGridProps) 
 
         <div className="flex flex-wrap justify-between items-center mb-6 md:mb-8 gap-4 border-b border-stone-200 pb-4">
           <p className="text-sm text-stone-500">
-            {visible.length} producto{visible.length === 1 ? "" : "s"}
+            {contar(visible.length, "producto")}
           </p>
 
-          <div className="flex items-center gap-3 ml-auto">
-            <label
-              htmlFor="orden"
-              className="text-sm text-stone-500 whitespace-nowrap"
-            >
-              Ordenar por
-            </label>
-            <div className="relative">
-              <select
-                id="orden"
-                value={sortOption}
-                onChange={(e) => setSortOption(e.target.value as SortOption)}
-                className="appearance-none bg-transparent text-stone-700 text-sm py-2.5 pr-6 focus:outline-none border-b border-stone-300 cursor-pointer"
-              >
-                <option value="destacados">Destacados</option>
-                <option value="menor-precio">Menor precio</option>
-                <option value="mayor-precio">Mayor precio</option>
-              </select>
-              <ChevronDown className="w-3.5 h-3.5 text-stone-500 absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none" />
-            </div>
+          <div className="ml-auto">
+            <SortDropdown
+              label="Ordenar por"
+              value={sortOption}
+              options={SORT_OPTIONS}
+              onChange={setSortOption}
+            />
           </div>
         </div>
 

@@ -42,6 +42,7 @@ import {
   statusMeta,
   type OrderStatus,
 } from "./orderStatus";
+import { contar } from "@/app/lib/plural";
 
 export type OrderItemRow = {
   id: string;
@@ -423,7 +424,7 @@ export default function OrderTable({ rows }: { rows: OrderRow[] }) {
           <div className="px-6 py-16 text-center">
             <ShoppingBag className="mx-auto h-8 w-8 text-stone-300" />
             <p className="mt-3 text-sm text-stone-500">
-              Todavia no entro ningun pedido.
+              Todavía no entró ningún pedido.
             </p>
             <p className="mt-1 text-xs text-stone-400">
               Los pedidos los genera el checkout de la tienda, no se cargan a
@@ -453,8 +454,10 @@ export default function OrderTable({ rows }: { rows: OrderRow[] }) {
                       <p className="font-mono">#{row.id.slice(0, 8)}</p>
                       <p className="mt-0.5">{formatDate(row.createdAt)}</p>
                       <p className="mt-0.5">
-                        {row.items.reduce((acc, i) => acc + i.quantity, 0)}{" "}
-                        item(s)
+                        {contar(
+                          row.items.reduce((acc, i) => acc + i.quantity, 0),
+                          "item",
+                        )}
                       </p>
                     </div>
                     <p className="text-lg font-semibold text-stone-900">
@@ -693,7 +696,7 @@ export default function OrderTable({ rows }: { rows: OrderRow[] }) {
               </div>
               <p className="mt-2 text-xs text-stone-400">
                 Los precios son los del momento de la compra, no los actuales
-                del catalogo.
+                del catálogo.
               </p>
             </section>
 

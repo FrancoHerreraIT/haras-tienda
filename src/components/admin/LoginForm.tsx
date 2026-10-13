@@ -31,7 +31,7 @@ export default function LoginForm() {
       setError(
         result?.code === "demasiados_intentos"
           ? "Demasiados intentos seguidos. Esperá 15 minutos y probá de nuevo."
-          : "Email o contrasena incorrectos.",
+          : "Email o contraseña incorrectos.",
       );
       setLoading(false);
       return;
@@ -71,7 +71,7 @@ export default function LoginForm() {
           htmlFor="password"
           className="block text-[11px] font-semibold tracking-wide text-stone-500 mb-2"
         >
-          Contrasena
+          Contraseña
         </label>
         <div className="relative">
           <Lock className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
@@ -91,7 +91,7 @@ export default function LoginForm() {
           <button
             type="button"
             onClick={() => setShowPassword((visible) => !visible)}
-            aria-label={showPassword ? "Ocultar contrasena" : "Mostrar contrasena"}
+            aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
             aria-pressed={showPassword}
             aria-controls="password"
             className="absolute right-1 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-md text-stone-400 hover:text-[#8B5A2B] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#8B5A2B]/40 transition-colors"

@@ -32,7 +32,7 @@ export default async function LoginPage() {
             Haras del Este
           </span>
           <span className="block text-[9px] sm:text-[10px] tracking-wide text-amber-700/90 mt-2">
-            Panel de Administracion
+            Panel de Administración
           </span>
         </div>
 
@@ -43,7 +43,7 @@ export default async function LoginPage() {
               Bienvenido de nuevo
             </h1>
             <p className="mt-1.5 mb-7 text-sm text-stone-500">
-              Ingresa tus credenciales para gestionar el inventario.
+              Ingresá tus credenciales para gestionar el inventario.
             </p>
 
             <LoginForm />

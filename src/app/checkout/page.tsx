@@ -30,6 +30,7 @@ import {
 } from "@/app/lib/checkout";
 import { useMercadoPagoCheckout } from "@/app/lib/useMercadoPagoCheckout";
 import { PICKUP_BRANCHES } from "@/app/lib/branches";
+import { contar } from "@/app/lib/plural";
 import { confirmarPedidoPorTransferencia } from "./actions";
 
 const greatVibes = Great_Vibes({
@@ -845,8 +846,7 @@ export default function CheckoutPage() {
                   <div className="border-t border-stone-200 mt-6 pt-6 space-y-3">
                     <div className="flex justify-between text-sm">
                       <span className="text-stone-500">
-                        Subtotal ({totalUnidades}{" "}
-                        {totalUnidades === 1 ? "producto" : "productos"})
+                        Subtotal ({contar(totalUnidades, "producto")})
                       </span>
                       <span className="text-stone-800 tabular-nums">
                         $ {subtotal.toLocaleString("es-AR")}

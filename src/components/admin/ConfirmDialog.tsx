@@ -20,6 +20,10 @@ type ConfirmDialogProps = {
   onConfirm: () => Promise<string | void>;
 };
 
+/* Alto tactil en px: el rem del sitio esta al 67% (globals.css) y el py-3
+   de btnBase deja el boton bastante por debajo de los 44px recomendados. */
+const btnTactil = "min-h-[44px] sm:min-h-[38px]";
+
 /**
  * Dialogo unico de confirmacion del panel: se usa igual para dar de baja
  * una categoria, desactivar un producto o cancelar un pedido.
@@ -76,7 +80,7 @@ export default function ConfirmDialog({
             type="button"
             onClick={handleClose}
             disabled={pending}
-            className={btnSecondary}
+            className={`${btnSecondary} ${btnTactil}`}
           >
             {cancelLabel}
           </button>
@@ -84,7 +88,7 @@ export default function ConfirmDialog({
             type="button"
             onClick={handleConfirm}
             disabled={pending}
-            className={tone === "danger" ? btnDanger : btnPrimary}
+            className={`${tone === "danger" ? btnDanger : btnPrimary} ${btnTactil}`}
           >
             {pending && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
             {confirmLabel}
@@ -92,9 +96,13 @@ export default function ConfirmDialog({
         </>
       }
     >
-      <div className="flex gap-4">
+      {/* El recuadro del icono tiene medida fija y va arriba (self-start):
+          como hijo de un flex se estiraba por defecto al alto del mensaje, y
+          con dos parrafos quedaba como una barra vertical. */}
+      <div className="flex items-start gap-4">
         <span
-          className={`shrink-0 rounded-lg p-2.5 ${
+          aria-hidden="true"
+          className={`flex h-10 w-10 shrink-0 items-center justify-center self-start rounded-lg ${
             tone === "danger"
               ? "bg-red-100 text-red-700"
               : "bg-[#8B5A2B]/10 text-[#8B5A2B]"
@@ -102,7 +110,9 @@ export default function ConfirmDialog({
         >
           <AlertTriangle className="h-5 w-5" />
         </span>
-        <div className="text-sm leading-relaxed text-stone-600">{message}</div>
+        <div className="min-w-0 flex-1 text-sm leading-relaxed text-stone-600">
+          {message}
+        </div>
       </div>
 
       {error && (

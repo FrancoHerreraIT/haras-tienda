@@ -70,7 +70,7 @@ export default function CategoryTable({ rows }: { rows: CategoryRow[] }) {
           className={`${btnPrimary} w-full sm:w-auto`}
         >
           <Plus className="h-4 w-4" />
-          Nueva Categoria
+          Nueva Categoría
         </button>
       </div>
 
@@ -79,10 +79,10 @@ export default function CategoryTable({ rows }: { rows: CategoryRow[] }) {
           <div className="px-6 py-16 text-center">
             <Tags className="mx-auto h-8 w-8 text-stone-300" />
             <p className="mt-3 text-sm text-stone-500">
-              Todavia no cargaste ninguna categoria.
+              Todavía no cargaste ninguna categoría.
             </p>
             <p className="mt-1 text-xs text-stone-400">
-              Necesitas al menos una para poder dar de alta productos.
+              Necesitás al menos una para poder dar de alta productos.
             </p>
           </div>
         ) : (
@@ -97,7 +97,7 @@ export default function CategoryTable({ rows }: { rows: CategoryRow[] }) {
                   </div>
                   <p className="mt-1 text-sm text-stone-500">
                     {row.description ?? (
-                      <span className="text-stone-300">Sin descripcion</span>
+                      <span className="text-stone-300">Sin descripción</span>
                     )}
                   </p>
                   <div className="mt-3 flex flex-wrap gap-1 border-t border-stone-100 pt-3">
@@ -113,7 +113,7 @@ export default function CategoryTable({ rows }: { rows: CategoryRow[] }) {
               <thead className="border-b border-stone-200 bg-stone-50/80">
                 <tr className="text-[11px] tracking-wide text-stone-500">
                   <th className="px-4 py-3 font-semibold">Nombre</th>
-                  <th className="px-4 py-3 font-semibold">Descripcion</th>
+                  <th className="px-4 py-3 font-semibold">Descripción</th>
                   <th className="px-4 py-3 font-semibold">Productos</th>
                   <th className="px-4 py-3 text-right font-semibold">
                     Acciones
@@ -128,7 +128,7 @@ export default function CategoryTable({ rows }: { rows: CategoryRow[] }) {
                     </td>
                     <td className="max-w-md px-4 py-4 text-stone-500">
                       {row.description ?? (
-                        <span className="text-stone-300">Sin descripcion</span>
+                        <span className="text-stone-300">Sin descripción</span>
                       )}
                     </td>
                     <td className="px-4 py-4">{countBadge(row.productCount)}</td>
@@ -151,10 +151,10 @@ export default function CategoryTable({ rows }: { rows: CategoryRow[] }) {
         open={form.isOpen}
         onClose={form.requestClose}
         dismissible={form.dismissible}
-        title={isNew ? "Nueva Categoria" : "Editar Categoria"}
+        title={isNew ? "Nueva Categoría" : "Editar Categoría"}
         description={
           isNew
-            ? "Los rubros agrupan el catalogo y son el filtro de la tienda."
+            ? "Los rubros agrupan el catálogo y son el filtro de la tienda."
             : `Modificando "${current?.name}".`
         }
         size="md"
@@ -178,7 +178,7 @@ export default function CategoryTable({ rows }: { rows: CategoryRow[] }) {
 
           <div>
             <label htmlFor="description" className={labelClass}>
-              Descripcion <span className="normal-case">(opcional)</span>
+              Descripción <span className="normal-case">(opcional)</span>
             </label>
             <textarea
               id="description"
@@ -209,7 +209,7 @@ export default function CategoryTable({ rows }: { rows: CategoryRow[] }) {
               Cancelar
             </button>
             <button type="submit" className={btnPrimary}>
-              {isNew ? "Crear Categoria" : "Guardar Cambios"}
+              {isNew ? "Crear Categoría" : "Guardar Cambios"}
             </button>
           </div>
         </form>
@@ -220,12 +220,12 @@ export default function CategoryTable({ rows }: { rows: CategoryRow[] }) {
         {...form.confirmSave}
         layer="top"
         tone="default"
-        title={isNew ? "Crear categoria" : "Guardar cambios"}
-        confirmLabel={isNew ? "Si, crear" : "Si, guardar"}
+        title={isNew ? "Crear categoría" : "Guardar cambios"}
+        confirmLabel={isNew ? "Sí, crear" : "Sí, guardar"}
         cancelLabel="Volver al formulario"
         message={
           isNew ? (
-            <>Se va a dar de alta una nueva categoria en el catalogo.</>
+            <>Se va a dar de alta una nueva categoría en el catálogo.</>
           ) : (
             <>
               Vas a modificar <strong>{current?.name}</strong>. Los cambios se
@@ -240,21 +240,21 @@ export default function CategoryTable({ rows }: { rows: CategoryRow[] }) {
         {...form.confirmDiscard}
         layer="top"
         title="Descartar cambios"
-        confirmLabel="Si, descartar"
+        confirmLabel="Sí, descartar"
         cancelLabel="Seguir editando"
         message={
-          <>Tenes cambios sin guardar. Si salis ahora se pierden.</>
+          <>Tenés cambios sin guardar. Si salís ahora se pierden.</>
         }
       />
 
       <ConfirmDialog
         open={deleting !== null}
         onClose={() => setDeleting(null)}
-        title="Eliminar categoria"
-        confirmLabel="Si, eliminar"
+        title="Eliminar categoría"
+        confirmLabel="Sí, eliminar"
         message={
           <>
-            Vas a eliminar <strong>{deleting?.name}</strong>. Esta accion no se
+            Vas a eliminar <strong>{deleting?.name}</strong>. Esta acción no se
             puede deshacer.
           </>
         }

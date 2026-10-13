@@ -5,6 +5,7 @@ import ProductCard from "./ProductCard";
 import Pagination from "./Pagination";
 import { ANCLA_CATALOGO } from "@/app/lib/catalogo";
 import { RUTA_CATALOGO } from "@/app/lib/search";
+import { contar } from "@/app/lib/plural";
 import type { CatalogoPaginado } from "@/app/lib/storeData";
 
 /**
@@ -82,7 +83,7 @@ export default function CatalogSection({ catalogo }: CatalogSectionProps) {
       </div>
 
       <p className="mt-4 mb-8 text-sm text-stone-500">
-        {total} producto{total === 1 ? "" : "s"} en el catálogo
+        {contar(total, "producto")} en el catálogo
         {totalPages > 1 && ` — página ${page} de ${totalPages}`}
       </p>
 

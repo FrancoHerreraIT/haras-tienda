@@ -23,7 +23,7 @@ const greatVibes = Great_Vibes({
 const navItems = [
   { label: "Inicio", href: "/admin", icon: LayoutDashboard },
   { label: "Productos", href: "/admin/productos", icon: Package },
-  { label: "Categorias", href: "/admin/categorias", icon: Tags },
+  { label: "Categorías", href: "/admin/categorias", icon: Tags },
   { label: "Pedidos", href: "/admin/pedidos", icon: ShoppingBag },
 ] as const;
 
@@ -102,7 +102,7 @@ export default function Sidebar({ userName, userEmail }: SidebarProps) {
             className="flex w-full items-center gap-3 rounded-lg px-3.5 py-2.5 text-sm text-stone-400 transition-colors hover:bg-red-900/30 hover:text-red-300"
           >
             <LogOut className="h-4 w-4 shrink-0" />
-            Cerrar Sesion
+            Cerrar Sesión
           </button>
         </form>
       </div>
@@ -132,7 +132,7 @@ export default function Sidebar({ userName, userEmail }: SidebarProps) {
         <form action={logoutAction}>
           <button
             type="submit"
-            aria-label="Cerrar sesion"
+            aria-label="Cerrar sesión"
             className="flex h-11 w-11 items-center justify-center rounded-lg text-stone-400 transition-colors hover:bg-red-900/30 hover:text-red-300"
           >
             <LogOut className="h-4 w-4" />

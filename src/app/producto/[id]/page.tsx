@@ -9,6 +9,7 @@ import CartDrawer from "@/components/CartDrawer";
 import ProductCard from "@/components/ProductCard";
 import ProductGallery from "@/components/ProductGallery";
 import AddToCartButton from "@/components/AddToCartButton";
+import ProductBadges from "@/components/ProductBadges";
 import {
   getStoreCategories,
   getStoreProduct,
@@ -16,6 +17,7 @@ import {
 } from "@/app/lib/storeData";
 import { hrefCategoria } from "@/app/lib/search";
 import { DESCUENTO_TRANSFERENCIA } from "@/app/lib/paymentConfig";
+import { contarUnidades } from "@/app/lib/plural";
 
 /* La ficha sale de la base en cada visita, igual que el listado. */
 export const dynamic = "force-dynamic";
@@ -62,7 +64,6 @@ export default async function ProductoPage({
 
   const { product, related } = data;
   const agotado = product.stock <= 0;
-  const ultimas = !agotado && product.stock <= 3;
 
   return (
     <div className="min-h-screen w-full bg-[#F7F5F0] text-stone-800">
@@ -91,6 +92,14 @@ export default async function ProductoPage({
           <ProductGallery images={product.images} title={product.title} />
 
           <div className="lg:pt-2">
+            {/* Mismas etiquetas que la tarjeta del listado. Sin ninguna no se
+                reserva lugar: aca no hay una grilla que emparejar. */}
+            <ProductBadges
+              stock={product.stock}
+              destacado={product.isFeatured}
+              className="mb-3 empty:hidden"
+            />
+
             {/* Nombre primero y rubro debajo, apagado. El nombre va completo
                 (sin line-clamp): la ficha es donde se lee entero. */}
             <h1 className="font-[family-name:var(--font-display)] text-[22px] leading-tight text-stone-900 sm:text-[24px] md:text-[28px]">
@@ -109,20 +118,13 @@ export default async function ProductoPage({
               {DESCUENTO_TRANSFERENCIA}% OFF con transferencia
             </p>
 
-            {/* Estado de stock, con el mismo criterio que el listado */}
-            <p className="mt-2 text-sm">
-              {agotado ? (
-                <span className="font-semibold text-red-700">Sin stock</span>
-              ) : ultimas ? (
-                <span className="font-semibold text-amber-700">
-                  Ultimas {product.stock} unidades
-                </span>
-              ) : (
-                <span className="text-emerald-700">
-                  Disponible ({product.stock} en stock)
-                </span>
-              )}
-            </p>
+            {/* "Sin stock" y "Últimas N unidades" ya los dicen las etiquetas
+                de arriba; aca queda el detalle de cuanto hay. */}
+            {!agotado && (
+              <p className="mt-2 text-[13px] text-emerald-700">
+                Disponible ({contarUnidades(product.stock)} en stock)
+              </p>
+            )}
 
             <div className="mt-7">
               <AddToCartButton product={product} />
@@ -155,7 +157,7 @@ export default async function ProductoPage({
                 <div className="flex justify-between gap-4 py-2.5">
                   <dt className="text-stone-500">Disponibilidad</dt>
                   <dd className="text-right text-stone-800">
-                    {agotado ? "Sin stock" : `${product.stock} unidades`}
+                    {agotado ? "Sin stock" : contarUnidades(product.stock)}
                   </dd>
                 </div>
                 <div className="flex justify-between gap-4 py-2.5">

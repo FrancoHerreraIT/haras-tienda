@@ -45,6 +45,15 @@ model Product {
   /// Cuando se dio de alta el producto.
   createdAt      DateTime        @default(now())
 
+  /// Cuando el dueno lo elimino desde el panel; null si sigue en el catalogo.
+  ///
+  /// Un producto que ya se vendio no se puede borrar de verdad: sus
+  /// OrderItem lo referencian y el historial de pedidos perderia el nombre
+  /// de lo vendido. En ese caso "eliminar" lo marca aca (y lo desactiva): no
+  /// aparece mas ni en la tienda ni en el panel, pero la fila queda para los
+  /// pedidos. Los que nunca se vendieron se borran de la base.
+  deletedAt      DateTime?
+
   categoryId     String
   category       Category        @relation(fields: [categoryId], references: [id])
   

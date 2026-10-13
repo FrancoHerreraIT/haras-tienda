@@ -1,12 +1,15 @@
 import { PackageX } from "lucide-react";
 
 import { prisma } from "@/app/lib/prisma";
+import { contar } from "@/app/lib/plural";
 import ProductTable from "@/components/admin/ProductTable";
 import { headingClass } from "@/components/admin/ui";
 
 export default async function ProductosPage() {
   const [products, categories] = await Promise.all([
     prisma.product.findMany({
+      /* Los eliminados que quedaron por el historial de pedidos no se listan. */
+      where: { deletedAt: null },
       orderBy: [{ isActive: "desc" }, { title: "asc" }],
       include: {
         category: { select: { name: true } },
@@ -53,8 +56,9 @@ export default async function ProductosPage() {
         </span>
         <h1 className={`${headingClass} mt-2 text-2xl sm:text-3xl`}>Productos</h1>
         <p className="mt-2 text-sm text-stone-500">
-          {rows.length} producto(s) en el catalogo, {activeCount} activo(s),{" "}
-          {featuredCount} destacado(s) en la portada.
+          {contar(rows.length, "producto")} en el catálogo,{" "}
+          {contar(activeCount, "activo")},{" "}
+          {contar(featuredCount, "destacado")} en la portada.
         </p>
 
         {/* `flex` y no `inline-flex`: en un telefono, un inline-flex se estira

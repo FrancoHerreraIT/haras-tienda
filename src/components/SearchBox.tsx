@@ -12,6 +12,7 @@ import {
   hrefBusqueda,
   type ResultadoBusqueda,
 } from "@/app/lib/search";
+import ProductBadges from "./ProductBadges";
 
 /* Pausa entre teclas antes de pedir sugerencias. Corta: la primera letra ya
    muestra resultados, pero escribir "tabla" de corrido no dispara cinco
@@ -261,11 +262,12 @@ export default function SearchBox({
                         <span className="block text-sm font-semibold text-stone-900">
                           $ {producto.price.toLocaleString("es-AR")}
                         </span>
-                        {producto.stock <= 0 && (
-                          <span className="block text-[10px] text-stone-400">
-                            Sin stock
-                          </span>
-                        )}
+                        {/* Mismas etiquetas de stock que la tarjeta. El
+                            buscador no sabe si el producto es destacado. */}
+                        <ProductBadges
+                          stock={producto.stock}
+                          className="mt-1 justify-end empty:hidden"
+                        />
                       </span>
                     </Link>
                   </li>

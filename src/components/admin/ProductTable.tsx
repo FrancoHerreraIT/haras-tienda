@@ -33,6 +33,7 @@ import {
   toggleProductActive,
   updateProduct,
 } from "@/app/admin/productos/actions";
+import { contar, esStockBajo, etiquetaStockBajo } from "@/app/lib/plural";
 
 export type ProductRow = {
   id: string;
@@ -140,7 +141,7 @@ export default function ProductTable({ rows, categories }: ProductTableProps) {
       className={`text-[13px] tabular-nums ${
         stock === 0
           ? "font-bold text-red-700"
-          : stock <= 3
+          : esStockBajo(stock)
             ? "font-bold text-amber-700"
             : "font-semibold text-stone-700"
       }`}
@@ -152,7 +153,8 @@ export default function ProductTable({ rows, categories }: ProductTableProps) {
   /**
    * El stock en las tarjetas de mobile, donde si hay lugar para palabras.
    *
-   * Mismo vocabulario que la tienda: "Sin stock" y "Últimas N".
+   * Mismo vocabulario que la tienda: "Sin stock", "Última unidad" y
+   * "Últimas N unidades".
    */
   const stockEtiqueta = (stock: number) => {
     if (stock === 0) {
@@ -164,10 +166,10 @@ export default function ProductTable({ rows, categories }: ProductTableProps) {
       );
     }
 
-    if (stock <= 3) {
+    if (esStockBajo(stock)) {
       return (
         <span className="inline-flex items-center rounded-full bg-amber-100 px-2.5 py-1 text-[11px] font-semibold tracking-wide text-amber-800">
-          Últimas {stock}
+          {etiquetaStockBajo(stock)}
         </span>
       );
     }
@@ -180,7 +182,7 @@ export default function ProductTable({ rows, categories }: ProductTableProps) {
       <div className="mb-5 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
         {noCategories ? (
           <p className="text-sm text-amber-800">
-            Carga al menos una categoria antes de dar de alta productos.
+            Cargá al menos una categoría antes de dar de alta productos.
           </p>
         ) : (
           <span />
@@ -201,7 +203,7 @@ export default function ProductTable({ rows, categories }: ProductTableProps) {
           <div className="px-6 py-16 text-center">
             <Package className="mx-auto h-8 w-8 text-stone-300" />
             <p className="mt-3 text-sm text-stone-500">
-              Todavia no hay productos en el catalogo.
+              Todavía no hay productos en el catálogo.
             </p>
           </div>
         ) : (
@@ -279,7 +281,7 @@ export default function ProductTable({ rows, categories }: ProductTableProps) {
                   <th className="w-[56px] px-4 py-3 font-semibold">Foto</th>
                   {/* Sin ancho: se queda con lo que sobra. */}
                   <th className="px-4 py-3 font-semibold">Producto</th>
-                  <th className="w-[96px] px-4 py-3 font-semibold">Categoria</th>
+                  <th className="w-[96px] px-4 py-3 font-semibold">Categoría</th>
                   <th className="w-[84px] px-4 py-3 text-right font-semibold">
                     Precio
                   </th>
@@ -387,7 +389,7 @@ export default function ProductTable({ rows, categories }: ProductTableProps) {
         <form {...form.formProps} className="space-y-5">
           <div>
             <label htmlFor="title" className={labelClass}>
-              Titulo
+              Título
             </label>
             <input
               id="title"
@@ -403,7 +405,7 @@ export default function ProductTable({ rows, categories }: ProductTableProps) {
 
           <div>
             <label htmlFor="description" className={labelClass}>
-              Descripcion <span className="normal-case">(opcional)</span>
+              Descripción <span className="normal-case">(opcional)</span>
             </label>
             <textarea
               id="description"
@@ -411,7 +413,7 @@ export default function ProductTable({ rows, categories }: ProductTableProps) {
               rows={3}
               maxLength={600}
               defaultValue={current?.description ?? ""}
-              placeholder="Madera maciza de nogal, terminacion con aceite de lino..."
+              placeholder="Madera maciza de nogal, terminación con aceite de lino..."
               className={`${inputClass} resize-none`}
             />
           </div>
@@ -452,7 +454,7 @@ export default function ProductTable({ rows, categories }: ProductTableProps) {
 
             <div>
               <label htmlFor="categoryId" className={labelClass}>
-                Categoria
+                Categoría
               </label>
               <select
                 id="categoryId"
@@ -490,7 +492,7 @@ export default function ProductTable({ rows, categories }: ProductTableProps) {
               <span className="text-sm text-stone-700">
                 Producto activo
                 <span className="block text-xs text-stone-400">
-                  Si lo desactivas deja de aparecer en la tienda, pero conserva su
+                  Si lo desactivás deja de aparecer en la tienda, pero conserva su
                   historial de ventas.
                 </span>
               </span>
@@ -507,10 +509,10 @@ export default function ProductTable({ rows, categories }: ProductTableProps) {
                 className="h-5 w-5 shrink-0 accent-[#8B5A2B]"
               />
               <span className="text-sm text-stone-700">
-                Establecer como destacado en la pagina principal
+                Establecer como destacado en la página principal
                 <span className="block text-xs text-stone-400">
                   Sube a la cabeza de la grilla de la portada, adelante del
-                  resto del catalogo. El ultimo que tildes queda primero.
+                  resto del catálogo. El último que tildés queda primero.
                 </span>
               </span>
             </label>
@@ -546,7 +548,7 @@ export default function ProductTable({ rows, categories }: ProductTableProps) {
         layer="top"
         tone="default"
         title={isNew ? "Crear producto" : "Guardar cambios"}
-        confirmLabel={isNew ? "Si, crear" : "Si, guardar"}
+        confirmLabel={isNew ? "Sí, crear" : "Sí, guardar"}
         cancelLabel="Volver al formulario"
         message={
           isNew ? (
@@ -568,9 +570,9 @@ export default function ProductTable({ rows, categories }: ProductTableProps) {
         {...form.confirmDiscard}
         layer="top"
         title="Descartar cambios"
-        confirmLabel="Si, descartar"
+        confirmLabel="Sí, descartar"
         cancelLabel="Seguir editando"
-        message={<>Tenes cambios sin guardar. Si salis ahora se pierden.</>}
+        message={<>Tenés cambios sin guardar. Si salís ahora se pierden.</>}
       />
 
       <ConfirmDialog
@@ -583,7 +585,7 @@ export default function ProductTable({ rows, categories }: ProductTableProps) {
           toggling?.isActive ? (
             <>
               <strong>{toggling?.title}</strong> va a dejar de mostrarse en la
-              tienda. Podes volver a activarlo cuando quieras.
+              tienda. Podés volver a activarlo cuando quieras.
             </>
           ) : (
             <>
@@ -606,15 +608,16 @@ export default function ProductTable({ rows, categories }: ProductTableProps) {
         open={deleting !== null}
         onClose={() => setDeleting(null)}
         title="Eliminar producto"
-        confirmLabel="Si, eliminar"
+        confirmLabel="Sí, eliminar"
         message={
           <>
             Vas a eliminar <strong>{deleting?.title}</strong> de forma
             definitiva.
             {deleting && deleting.orderItemCount > 0 && (
-              <span className="mt-2 block text-red-700">
-                Ojo: aparece en {deleting.orderItemCount} pedido(s), asi que
-                solo vas a poder desactivarlo.
+              <span className="mt-2 block text-stone-600">
+                Aparece en {contar(deleting.orderItemCount, "pedido")}: va a
+                desaparecer del panel y de la tienda, pero esos pedidos
+                conservan el registro de lo que se vendió.
               </span>
             )}
           </>

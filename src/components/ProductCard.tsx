@@ -3,16 +3,11 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import {
-  ChevronLeft,
-  ChevronRight,
-  Package,
-  ShoppingCart,
-  Star,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, Package, ShoppingCart } from "lucide-react";
 import { useCartStore } from "@/store/useCartStore";
 import { DESCUENTO_TRANSFERENCIA } from "@/app/lib/paymentConfig";
 import { portada, type StoreProduct } from "@/app/lib/storeData";
+import ProductBadges from "./ProductBadges";
 
 interface ProductCardProps {
   product: StoreProduct;
@@ -33,7 +28,6 @@ export default function ProductCard({ product }: ProductCardProps) {
   const foto = portada(product);
   const tieneGaleria = fotos.length > 1;
   const agotado = product.stock <= 0;
-  const ultimasUnidades = !agotado && product.stock <= 3;
   const ficha = `/producto/${product.id}`;
 
   /* Da la vuelta en los extremos: desde la ultima foto, "siguiente" vuelve
@@ -43,10 +37,27 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   return (
     <div className="bg-white rounded-xl p-4 sm:p-6 border border-stone-200 shadow-sm shadow-stone-200/50 hover:shadow-lg hover:shadow-stone-300/50 hover:border-stone-300 hover:-translate-y-0.5 transition-all flex flex-col h-full">
+      {/* Las etiquetas van arriba de la foto y no encima: con object-contain
+          una foto vertical ocupa todo el alto del marco y la etiqueta le
+          tapaba el producto. El alto minimo reserva la fila aunque no haya
+          ninguna, para que las fotos arranquen a la misma altura en todas las
+          tarjetas. "Destacado" explica por que esos productos encabezan una
+          grilla que si no se leeria en orden alfabetico. */}
+      <ProductBadges
+        stock={product.stock}
+        destacado={product.isFeatured}
+        className="mb-3 min-h-[22px]"
+      />
+
       {/* Marco de la foto. Es un div y no el Link porque las flechas son
           botones: un <button> dentro de un <a> no es HTML valido. El Link
           se superpone en toda el area y las flechas quedan por encima. */}
-      <div className="relative w-full aspect-[4/3] bg-[#F7F5F0] rounded-lg border border-stone-100 overflow-hidden flex items-center justify-center mb-4 sm:mb-6 group">
+      {/* 4/5 y object-contain: casi todas las fotos se sacan con el celular,
+          en vertical. Con el marco apaisado y object-cover se recortaba buena
+          parte del producto; asi se ve entero y el crema rellena los costados
+          de las fotos que no llegan al ancho. El marco fijo deja todas las
+          tarjetas de la grilla con la foto del mismo alto. */}
+      <div className="relative w-full aspect-[4/5] bg-[#F7F5F0] rounded-lg border border-stone-100 overflow-hidden flex items-center justify-center mb-4 sm:mb-6 group">
         {foto ? (
           <Image
             src={fotos[activa]}
@@ -57,7 +68,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             }
             fill
             sizes="(max-width: 420px) 100vw, (max-width: 1280px) 50vw, 25vw"
-            className={`object-cover transition-transform duration-300 group-hover:scale-105 ${
+            className={`object-contain transition-transform duration-300 group-hover:scale-[1.03] ${
               agotado ? "opacity-60" : ""
             }`}
           />
@@ -75,31 +86,6 @@ export default function ProductCard({ product }: ProductCardProps) {
           aria-label={`Ver detalle de ${product.title}`}
           className="absolute inset-0 z-10"
         />
-
-        {agotado && (
-          <span className="absolute top-2 left-2 z-20 rounded-full bg-[#1C1A19]/90 px-2.5 py-1 text-[10px] font-semibold tracking-wide text-stone-100">
-            Sin stock
-          </span>
-        )}
-        {ultimasUnidades && (
-          <span className="absolute top-2 left-2 z-20 rounded-full bg-amber-700 px-2.5 py-1 text-[10px] font-semibold tracking-wide text-white">
-            Últimas {product.stock}
-          </span>
-        )}
-
-        {/* Los destacados comparten grilla con el resto del catalogo: sin esto
-            el visitante ve un orden distinto al alfabetico y no hay nada que
-            explique por que. Va a la derecha porque las etiquetas de stock ya
-            ocupan la esquina izquierda. */}
-        {product.isFeatured && (
-          <span
-            title="Producto destacado"
-            className="absolute top-2 right-2 z-20 flex items-center gap-1 rounded-full bg-[#8B5A2B] px-2.5 py-1 text-[10px] font-semibold tracking-wide text-[#F7F5F0]"
-          >
-            <Star className="h-3 w-3 fill-current" aria-hidden="true" />
-            Destacado
-          </span>
-        )}
 
         {/* Galeria en la vidriera: pasar las fotos sin entrar a la ficha */}
         {tieneGaleria && (

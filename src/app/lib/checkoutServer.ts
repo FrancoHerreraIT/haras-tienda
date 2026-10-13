@@ -23,6 +23,7 @@ import {
 import { CLIENTE_SIN_IDENTIFICAR } from "@/app/lib/orders";
 import { buscarSucursal, type PickupBranch } from "@/app/lib/branches";
 import { superaLimite } from "@/app/lib/rateLimit";
+import { contarUnidades } from "@/app/lib/plural";
 
 /** Linea pedida por el cliente, con la forma ya verificada en runtime. */
 export type LineaPedida = CheckoutLine;
@@ -292,7 +293,7 @@ export async function resolverLineas(
     if (producto.stock < linea.quantity) {
       return producto.stock === 0
         ? `Nos quedamos sin stock de "${producto.title}".`
-        : `Solo quedan ${producto.stock} unidades de "${producto.title}".`;
+        : `${producto.stock === 1 ? "Solo queda" : "Solo quedan"} ${contarUnidades(producto.stock)} de "${producto.title}".`;
     }
 
     /* price es Decimal(10,2): pasarlo a centavos es exacto. */

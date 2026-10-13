@@ -1,4 +1,5 @@
 import { prisma } from "@/app/lib/prisma";
+import { contar } from "@/app/lib/plural";
 import OrderTable from "@/components/admin/OrderTable";
 import { ORDER_STATUS } from "@/components/admin/orderStatus";
 import { headingClass } from "@/components/admin/ui";
@@ -57,7 +58,7 @@ export default async function PedidosPage() {
         </span>
         <h1 className={`${headingClass} mt-2 text-2xl sm:text-3xl`}>Pedidos</h1>
         <p className="mt-2 text-sm text-stone-500">
-          Seguimiento y estados de las ventas. {rows.length} pedido(s) en total.
+          Seguimiento y estados de las ventas. {contar(rows.length, "pedido")} en total.
         </p>
       </header>
 

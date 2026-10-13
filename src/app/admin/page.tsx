@@ -69,7 +69,7 @@ export default async function AdminDashboardPage() {
       icon: ShoppingBag,
     },
     {
-      label: "Categorias",
+      label: "Categorías",
       value: String(stats.categorias),
       hint: "Rubros cargados",
       icon: Tags,
@@ -86,7 +86,7 @@ export default async function AdminDashboardPage() {
           Panel de Control - Haras del Este
         </h1>
         <p className="mt-2 text-sm text-stone-500">
-          Hola {firstName}, desde aca gestionas el inventario, las categorias y
+          Hola {firstName}, desde acá gestionás el inventario, las categorías y
           los pedidos de la tienda.
         </p>
       </header>
